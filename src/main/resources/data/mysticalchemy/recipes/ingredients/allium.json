@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:allium",
+	"effects": [
+		{
+			"effect": "minecraft:absorption",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.3
+		}
+	]
+}

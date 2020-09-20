@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:bone",
+	"effects": [
+		{
+			"effect": "minecraft:weakness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:hunger",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:resistance",
+			"strength": 0.4
+		}
+	]
+}

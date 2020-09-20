@@ -1,0 +1,22 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:spider_eye",
+	"effects": [
+		{
+			"effect": "minecraft:instant_health",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:poison",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:slowness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:night_vision",
+			"strength": 0.5
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:wither_rose",
+	"effects": [
+		{
+			"effect": "minecraft:wither",
+			"strength": 1
+		}
+	]
+}

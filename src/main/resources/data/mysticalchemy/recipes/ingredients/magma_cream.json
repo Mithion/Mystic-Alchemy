@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:magma_cream",
+	"effects": [
+		{
+			"effect": "minecraft:slowness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:instant_damage",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:strength",
+			"strength": 0.4
+		}
+	]
+}

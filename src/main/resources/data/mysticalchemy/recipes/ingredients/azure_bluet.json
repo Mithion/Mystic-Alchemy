@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:azure_bluet",
+	"effects": [
+		{
+			"effect": "minecraft:blindness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:slow_falling",
+			"strength": 0.3
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:lily_of_the_valley",
+	"effects": [
+		{
+			"effect": "minecraft:slow_falling",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:haste",
+			"strength": 0.25
+		}
+	]
+}

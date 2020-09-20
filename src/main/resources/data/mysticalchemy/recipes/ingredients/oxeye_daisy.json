@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:oxeye_daisy",
+	"effects": [
+		{
+			"effect": "minecraft:instant_health",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:blindness",
+			"strength": 0.35
+		},
+		{
+			"effect": "minecraft:hunger",
+			"strength": 0.4
+		}
+	]
+}

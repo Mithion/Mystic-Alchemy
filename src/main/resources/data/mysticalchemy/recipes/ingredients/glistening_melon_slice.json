@@ -1,0 +1,22 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:glistering_melon_slice",
+	"effects": [
+		{
+			"effect": "minecraft:glowing",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:regeneration",
+			"strength": 0.15
+		},
+		{
+			"effect": "minecraft:luck",
+			"strength": 0.1
+		},
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.5
+		}
+	]
+}

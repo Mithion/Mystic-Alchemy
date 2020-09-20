@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:dandelion",
+	"effects": [
+		{
+			"effect": "minecraft:unluck",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:haste",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:resistance",
+			"strength": 0.25
+		}
+	]
+}

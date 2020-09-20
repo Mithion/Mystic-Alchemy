@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:ender_eye",
+	"effects": [
+		{
+			"effect": "minecraft:night_vision",
+			"strength": 1
+		},
+		{
+			"effect": "minecraft:nausea",
+			"strength": 0.35
+		}
+	]
+}

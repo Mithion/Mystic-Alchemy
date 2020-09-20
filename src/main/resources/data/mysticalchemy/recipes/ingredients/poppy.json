@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:poppy",
+	"effects": [
+		{
+			"effect": "minecraft:luck",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:nausea",
+			"strength": 0.3
+		}
+	]
+}

@@ -1,0 +1,6 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:redstone",
+	"effects": [],
+	"duration_added": 600
+}

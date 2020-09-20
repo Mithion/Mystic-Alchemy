@@ -1,0 +1,22 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:rabbit_foot",
+	"effects": [
+		{
+			"effect": "minecraft:haste",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:poison",
+			"strength": 0.35
+		},
+		{
+			"effect": "minecraft:hunger",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:luck",
+			"strength": 0.2
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:red_mushroom",
+	"effects": [
+		{
+			"effect": "minecraft:strength",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:weakness",
+			"strength": 0.5
+		}
+	]
+}

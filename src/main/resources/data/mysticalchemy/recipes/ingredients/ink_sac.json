@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:ink_sac",
+	"effects": [
+		{
+			"effect": "minecraft:dolphins_grace",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:blindness",
+			"strength": 0.5
+		}
+	]
+}

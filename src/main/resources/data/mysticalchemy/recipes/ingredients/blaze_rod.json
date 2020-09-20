@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:blaze_rod",
+	"effects": [
+		{
+			"effect": "minecraft:fire_resistance",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:instant_damage",
+			"strength": 0.5
+		}
+	]
+}

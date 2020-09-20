@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:slime_ball",
+	"effects": [
+		{
+			"effect": "minecraft:slowness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:jump_boost",
+			"strength": 0.5
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:phantom_membrane",
+	"effects": [
+		{
+			"effect": "minecraft:invisibility",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:weakness",
+			"strength": 0.35
+		},
+		{
+			"effect": "minecraft:hunger",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:night_vision",
+			"strength": 0.5
+		}
+	]
+}

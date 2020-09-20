@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  	"G G",
+  	"I I",
+  	"IBI"
+  ],
+  "key": {
+  	"G": {
+  		"item": "minecraft:gold_ingot"
+  	},
+  	"I": {
+  		"item": "minecraft:iron_ingot"
+  	},
+  	"B": {
+  		"item": "minecraft:iron_block"
+  	}
+  },
+  "result": {
+    "item": "mysticalchemy:crucible"   
+  }
+}

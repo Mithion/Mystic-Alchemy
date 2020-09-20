@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:fermented_spider_eye",
+	"effects": [
+		{
+			"effect": "minecraft:poison",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:strength",
+			"strength": 0.5
+		}
+	]
+}

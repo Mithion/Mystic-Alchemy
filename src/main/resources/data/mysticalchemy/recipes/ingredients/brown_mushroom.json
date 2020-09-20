@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:brown_mushroom",
+	"effects": [
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:speed",
+			"strength": 0.5
+		}
+	]
+}

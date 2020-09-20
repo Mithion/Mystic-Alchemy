@@ -1,0 +1,10 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:sea_pickle",
+	"effects": [
+		{
+			"effect": "minecraft:dolphins_grace",
+			"strength": 1
+		}
+	]
+}

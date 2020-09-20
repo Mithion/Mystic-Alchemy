@@ -1,0 +1,10 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:lily_pad",
+	"effects": [
+		{
+			"effect": "minecraft:jump_boost",
+			"strength": 1
+		}
+	]
+}

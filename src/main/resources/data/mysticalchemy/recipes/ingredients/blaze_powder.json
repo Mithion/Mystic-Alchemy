@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:blaze_powder",
+	"effects": [
+		{
+			"effect": "minecraft:haste",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:instant_damage",
+			"strength": 0.5
+		}
+	]
+}

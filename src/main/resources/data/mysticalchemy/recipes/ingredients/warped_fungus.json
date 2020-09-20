@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:warped_fungus",
+	"effects": [
+		{
+			"effect": "minecraft:unluck",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:weakness",
+			"strength": 0.7
+		},
+		{
+			"effect": "minecraft:regeneration",
+			"strength": 0.35
+		}
+	]
+}

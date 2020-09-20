@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:beetroot",
+	"effects": [
+		{
+			"effect": "minecraft:instant_health",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:poison",
+			"strength": 0.5
+		}
+	]
+}

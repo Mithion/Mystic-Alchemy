@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:cornflower",
+	"effects": [
+		{
+			"effect": "minecraft:health_boost",
+			"strength": 0.1
+		},
+		{
+			"effect": "minecraft:weakness",
+			"strength": 0.2
+		}
+	]
+}

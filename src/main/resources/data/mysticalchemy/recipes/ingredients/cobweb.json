@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:cobweb",
+	"effects": [
+		{
+			"effect": "minecraft:slowness",
+			"strength": 0.35
+		},
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.25
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:honey_bottle",
+	"effects": [
+		{
+			"effect": "minecraft:slowness",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:instant_health",
+			"strength": 0.5
+		}
+	]
+}

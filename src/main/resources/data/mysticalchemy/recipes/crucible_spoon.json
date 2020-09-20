@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  	" WP",
+  	" SW",
+  	"S  "
+  ],
+  "key": {
+  	"S": {
+  		"item": "minecraft:stick"
+  	},
+  	"W": {
+  		"tag": "minecraft:logs"
+  	},
+  	"P": {
+  		"tag": "minecraft:planks"
+  	}
+  },
+  "result": {
+    "item": "mysticalchemy:crucible_spoon"   
+  }
+}

@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:sweet_berries",
+	"effects": [
+		{
+			"effect": "minecraft:instant_health",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:instant_damage",
+			"strength": 0.5
+		}
+	]
+}

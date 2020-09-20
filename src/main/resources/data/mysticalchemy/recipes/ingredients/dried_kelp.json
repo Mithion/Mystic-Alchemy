@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:dried_kelp",
+	"effects": [
+		{
+			"effect": "minecraft:water_breathing",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.5
+		}
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "minecraft:kelp",
+	"effects": [
+		{
+			"effect": "minecraft:water_breathing",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:unluck",
+			"strength": 0.5
+		}
+	]
+}
