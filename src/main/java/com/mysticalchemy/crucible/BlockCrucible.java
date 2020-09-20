@@ -32,6 +32,8 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlockCrucible extends CauldronBlock {
 	public BlockCrucible() {
@@ -75,6 +77,7 @@ public class BlockCrucible extends CauldronBlock {
 	}
 
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
 		if (worldIn.isRemote && stateIn.get(LEVEL) > 0) {
 			TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);

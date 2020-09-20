@@ -154,10 +154,14 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 		@Override
 		public PotionIngredientRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
 			PotionIngredientRecipe recipe = new PotionIngredientRecipe(recipeId);
+			
 			recipe.makesLingering = buffer.readBoolean();
 			recipe.makesSplash = buffer.readBoolean();
 			recipe.durationAdded = buffer.readInt();
-			recipe.tagResource = buffer.readBoolean() ? buffer.readResourceLocation() : null;
+			
+			boolean hasTagResource = buffer.readBoolean();
+			if (hasTagResource)
+				recipe.tagResource = buffer.readResourceLocation();			
 			
 			int numItems = buffer.readInt();
 			for (int i = 0; i < numItems; ++i)
@@ -175,7 +179,8 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 			buffer.writeBoolean(recipe.makesLingering);
 			buffer.writeBoolean(recipe.makesSplash);
 			buffer.writeInt(recipe.durationAdded);
-			buffer.writeBoolean(recipe.tagResource == null);
+			
+			buffer.writeBoolean(recipe.tagResource != null);
 			if (recipe.tagResource != null)
 				buffer.writeResourceLocation(recipe.tagResource);
 			

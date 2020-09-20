@@ -26,7 +26,7 @@ public class MysticAlchemy {
 	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
 	public MysticAlchemy() {
-		final boolean HIDE_CONSOLE_NOISE = true; 
+		final boolean HIDE_CONSOLE_NOISE = false; 
 		if (HIDE_CONSOLE_NOISE) {
 			ForgeLoggerTweaker.setMinimumLevel(Level.WARN);
 			ForgeLoggerTweaker.applyLoggerFilter();

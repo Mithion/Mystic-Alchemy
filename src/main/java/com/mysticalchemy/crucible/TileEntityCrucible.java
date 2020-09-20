@@ -188,7 +188,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			if (resolved_recipe.getMakesSplash())
 				is_splash = true;
 			if (resolved_recipe.getDurationAdded() > 0)
-				duration += resolved_recipe.getDurationAdded();
+				duration += resolved_recipe.getDurationAdded() * stack.getCount();
 			
 			heat = MathHelper.clamp(heat - ITEM_HEAT_LOSS * stack.getCount(), MIN_TEMP, MAX_TEMP);
 			
