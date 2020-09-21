@@ -115,7 +115,7 @@ public class BlockCrucible extends CauldronBlock {
 			ItemStack potionstack = createBasePotionStack(crucible);
 			
 			prominents.forEach((e, f) -> {
-				prominentEffects.add(new EffectInstance(e, crucible.getDuration(), (int) Math.floor(f - 1)));
+				prominentEffects.add(new EffectInstance(e, e.isInstant() ? 1 : crucible.getDuration(), (int) Math.floor(f - 1)));
 			});
 			PotionUtils.addPotionToItemStack(potionstack, Potions.WATER);
 			PotionUtils.appendEffects(potionstack, prominentEffects);
