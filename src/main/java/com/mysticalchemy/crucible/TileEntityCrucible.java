@@ -288,6 +288,11 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		return effects;
 	}
 
+	@SuppressWarnings("unchecked")
+	public HashMap<Effect, Float> getAllEffects(){
+		return (HashMap<Effect, Float>) effectStrengths.clone();
+	}
+	
 	// ------------------------------------------------------------------
 	// Save / Load
 	// ------------------------------------------------------------------

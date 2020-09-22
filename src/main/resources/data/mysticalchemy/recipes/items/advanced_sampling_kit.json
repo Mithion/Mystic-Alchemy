@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+  	"P P",
+  	"PSP",
+  	" P "
+  ],
+  "key": {
+  	"S": {
+  		"item": "minecraft:blaze_rod"
+  	},
+  	"P": {
+  		"tag": "minecraft:glass_pane"
+  	}
+  },
+  "result": {
+    "item": "mysticalchemy:simple_sampling_kit",
+    "count": 8 
+  }
+}

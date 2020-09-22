@@ -5,7 +5,7 @@ issueTrackerURL="http://my.issue.tracker/"
 
 [[mods]]
 modId="mysticalchemy"
-version="0.0.2"
+version="0.0.3"
 displayName="Mystic Alchemy"
 credits="Thanks to the M&A community for helping me with ideas"
 authors="Mithion"

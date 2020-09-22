@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "mana-and-artifice:wakebloom",
+	"effects": [
+		{
+			"effect": "mana-and-artifice:instant-mana",
+			"strength": 0.1
+		},
+		{
+			"effect": "minecraft:conduit_power",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:mining_fatigue",
+			"strength": 0.5
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "mana-and-artifice:desert_nova",
+	"effects": [
+		{
+			"effect": "mana-and-artifice:mana-boost",
+			"strength": 0.5
+		},
+		{
+			"effect": "minecraft:fire-resistance",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:blindness",
+			"strength": 0.4
+		}
+	]
+}

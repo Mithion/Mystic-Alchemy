@@ -1,0 +1,18 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "mana-and-artifice:tarma_root",
+	"effects": [
+		{
+			"effect": "mana-and-artifice:instant-mana",
+			"strength": 0.25
+		},
+		{
+			"effect": "minecraft:invisibility",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:levitation",
+			"strength": 0.5
+		}
+	]
+}

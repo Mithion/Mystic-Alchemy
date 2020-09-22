@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "mysticalchemy:item/advanced_sampling_kit"
+  }
+}

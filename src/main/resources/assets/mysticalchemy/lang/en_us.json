@@ -1,5 +1,10 @@
 {
 	"block.mysticalchemy.crucible": "Crucible",
 	"item.mysticalchemy.concoction": "Mystic Concoction",
-	"item.mysticalchemy.crucible_spoon": "Crucible Spoon"
+	"item.mysticalchemy.crucible_spoon": "Crucible Spoon",
+	"item.mysticalchemy.simple_sampling_kit": "Simple Sampling Kit",
+	"item.mysticalchemy.advanced_sampling_kit": "Advanced Sampling Kit",	
+	
+	"chat.mysticalchemy.no_effects": "There are no effects in the potion.",
+	"chat.mysticalchemy.format_effect": "%s: %s"
 }

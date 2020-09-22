@@ -1,0 +1,14 @@
+{
+	"type": "mysticalchemy:potion_ingredient",
+	"item": "mana-and-artifice:cerublossom",
+	"effects": [
+		{
+			"effect": "mana-and-artifice:instant-mana",
+			"strength": 0.3
+		},
+		{
+			"effect": "minecraft:hunger",
+			"strength": 0.3
+		}
+	]
+}
