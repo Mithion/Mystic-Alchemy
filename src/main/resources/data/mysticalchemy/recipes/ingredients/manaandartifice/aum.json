@@ -7,7 +7,7 @@
 			"strength": 0.25
 		},
 		{
-			"effect": "minecraft:instant-damage",
+			"effect": "minecraft:instant_damage",
 			"strength": 0.4
 		}
 	]

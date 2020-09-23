@@ -10,11 +10,11 @@
   		"item": "minecraft:blaze_rod"
   	},
   	"P": {
-  		"tag": "minecraft:glass_pane"
+  		"item": "minecraft:glass_pane"
   	}
   },
   "result": {
-    "item": "mysticalchemy:simple_sampling_kit",
+    "item": "mysticalchemy:advanced_sampling_kit",
     "count": 8 
   }
 }

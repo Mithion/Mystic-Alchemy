@@ -10,7 +10,7 @@
   		"item": "minecraft:spider_eye"
   	},
   	"P": {
-  		"tag": "minecraft:glass_pane"
+  		"item": "minecraft:glass_pane"
   	}
   },
   "result": {
