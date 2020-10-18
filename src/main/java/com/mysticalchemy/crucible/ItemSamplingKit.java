@@ -22,7 +22,7 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties().maxStackSize(1).group(ItemGroup.BREWING));
+		super(new Item.Properties().group(ItemGroup.BREWING));
 		this.threshold = threshold;
 	}
 	
