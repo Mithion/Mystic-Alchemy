@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/Mithion/Mystic-Alchemy/issues"
 
 [[mods]]
 modId="mysticalchemy"
-version="0.0.4"
+version="0.0.5"
 displayName="Mystic Alchemy"
 credits="Thanks to the M&A community for helping me with ideas!  Thanks to Geolykt for the translation!"
 authors="Mithion"
