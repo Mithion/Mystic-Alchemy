@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 license="All rights reserved"
 issueTrackerURL="https://github.com/Mithion/Mystic-Alchemy/issues"
 
 [[mods]]
 modId="mysticalchemy"
-version="0.0.5"
+version="0.0.6"
 displayName="Mystic Alchemy"
 credits="Thanks to the M&A community for helping me with ideas!  Thanks to Geolykt for the translation!"
 authors="Mithion"
@@ -16,13 +16,13 @@ Expands potions and brewing in the game to be more dynamic, and magical.
 [[dependencies.mysticalchemy]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[35,)"
     ordering="NONE"
     side="BOTH"
     
 [[dependencies.mysticalchemy]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3]"
+    versionRange="[1.16.4]"
     ordering="NONE"
     side="BOTH"
