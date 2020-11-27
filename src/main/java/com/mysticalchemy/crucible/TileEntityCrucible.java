@@ -260,9 +260,9 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 				if (BrewingConfig.isEffectDisabled(e.getRegistryName())) return;
 				
 				if (effectStrengths.containsKey(e))
-					effectStrengths.put(e, Math.max(effectStrengths.get(e) + (f * quantity), MAX_MAGNITUDE));
+					effectStrengths.put(e, Math.min(effectStrengths.get(e) + (f * quantity), MAX_MAGNITUDE));
 				else
-					effectStrengths.put(e, Math.max((f * quantity), MAX_MAGNITUDE));
+					effectStrengths.put(e, Math.min((f * quantity), MAX_MAGNITUDE));
 			}
 		});
 	}
