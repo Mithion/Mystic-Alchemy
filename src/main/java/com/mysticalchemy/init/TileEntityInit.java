@@ -13,7 +13,7 @@ public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_TYPES = Defe
 	
 	public static final RegistryObject<TileEntityType<TileEntityCrucible>> CRUCIBLE_TILE_TYPE = TILE_ENTITY_TYPES.register(
 			"chalk_rune_tile_entity", 
-			() -> TileEntityType.Builder.create(TileEntityCrucible::new, 
+			() -> TileEntityType.Builder.of(TileEntityCrucible::new, 
 					BlockInit.CRUCIBLE.get()
 			).build(null));
 }

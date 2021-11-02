@@ -12,6 +12,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 
+import org.apache.logging.log4j.core.Filter.Result;
+
 public class ForgeLoggerTweaker {
 
   public static void applyLoggerFilter () {

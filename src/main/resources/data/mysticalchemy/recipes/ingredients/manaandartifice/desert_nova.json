@@ -7,7 +7,7 @@
 			"strength": 0.5
 		},
 		{
-			"effect": "minecraft:fire-resistance",
+			"effect": "minecraft:fire_resistance",
 			"strength": 0.25
 		},
 		{

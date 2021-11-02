@@ -37,7 +37,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlockCrucible extends CauldronBlock {
 	public BlockCrucible() {
-		super(Properties.create(Material.IRON).notSolid().hardnessAndResistance(3.0f));
+		super(Properties.of(Material.METAL).noOcclusion().strength(3.0f));
 	}
 
 	@Override
@@ -49,28 +49,28 @@ public class BlockCrucible extends CauldronBlock {
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
 		return new TileEntityCrucible();
 	}
-
+	
 	@Override
-	public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-		int fillLevel = state.get(LEVEL);
+	public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+		int fillLevel = state.getValue(LEVEL);
 		float insideYPos = pos.getY() + (6.0F + 3 * fillLevel) / 16.0F;
-		if (!worldIn.isRemote && fillLevel > 0 && entityIn.getPosY() <= insideYPos) {
+		if (!worldIn.isClientSide && fillLevel > 0 && entityIn.getY() <= insideYPos) {
 			if (entityIn instanceof ItemEntity) {
-				TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);
+				TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getBlockEntity(pos);
 				if (crucible != null) {
 					ItemStack stack = ((ItemEntity) entityIn).getItem();
 					if (crucible.tryAddIngredient(stack)) {
-						worldIn.playSound(null, pos, SoundEvents.ENTITY_GENERIC_SPLASH, SoundCategory.BLOCKS, 1.0f,
+						worldIn.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundCategory.BLOCKS, 1.0f,
 								(float) (0.8f + Math.random() * 0.4f));
 						entityIn.remove(false);
 					} else {
-						entityIn.addVelocity(-0.2 + Math.random() * 0.4, 1, -0.2 + Math.random() * 0.4);
+						entityIn.push(-0.2 + Math.random() * 0.4, 1, -0.2 + Math.random() * 0.4);
 					}
 				}
 			} else if (entityIn instanceof LivingEntity) {
-				TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);
+				TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getBlockEntity(pos);
 				if (crucible != null && crucible.getHeat() > crucible.getMaxHeat() / 2) {
-					((LivingEntity) entityIn).attackEntityFrom(DamageSource.IN_FIRE, 1);
+					((LivingEntity) entityIn).hurt(DamageSource.IN_FIRE, 1);
 				}
 			}
 		}
@@ -79,25 +79,24 @@ public class BlockCrucible extends CauldronBlock {
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-		if (worldIn.isRemote && stateIn.get(LEVEL) > 0) {
-			TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);
+		if (worldIn.isClientSide && stateIn.getValue(LEVEL) > 0) {
+			TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getBlockEntity(pos);
 			if (crucible != null && crucible.getHeat() > 0) {
 				Minecraft mc = Minecraft.getInstance();
-				worldIn.playSound(mc.player, pos, SoundEvents.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, SoundCategory.BLOCKS,
+				worldIn.playSound(mc.player, pos, SoundEvents.LAVA_POP, SoundCategory.BLOCKS,
 						1.0f, (float) (0.8f + Math.random() * 0.4f));
 			}
 		}
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player,
-			Hand handIn, BlockRayTraceResult hit) {
-		TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);
-		if (crucible != null && state.get(LEVEL) > 0) {
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+		TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getBlockEntity(pos);
+		if (crucible != null && state.getValue(LEVEL) > 0) {
 			HashMap<Effect, Float> prominents = crucible.getProminentEffects();
 			if (prominents.size() > 0) {
 				// if there are prominents and the player is using a glass bottle, assume extracting current potion.
-				if (player.getHeldItem(handIn).getItem() == Items.GLASS_BOTTLE) {
+				if (player.getItemInHand(handIn).getItem() == Items.GLASS_BOTTLE) {
 					extractPotion(worldIn, prominents, crucible, player, handIn, state, pos);
 					return ActionResultType.SUCCESS;
 				}
@@ -105,33 +104,32 @@ public class BlockCrucible extends CauldronBlock {
 				return ActionResultType.SUCCESS;
 			}
 		}
-		return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+		return super.use(state, worldIn, pos, player, handIn, hit);
 	}
 	
 	private void extractPotion(World worldIn, HashMap<Effect, Float> prominents, TileEntityCrucible crucible, PlayerEntity player, Hand handIn, BlockState state, BlockPos pos) {
-		if (!worldIn.isRemote) {
+		if (!worldIn.isClientSide) {
 			List<EffectInstance> prominentEffects = new ArrayList<EffectInstance>();
 			
 			ItemStack potionstack = createBasePotionStack(crucible);
 			
 			prominents.forEach((e, f) -> {
-				prominentEffects.add(new EffectInstance(e, e.isInstant() ? 1 : crucible.getDuration(), (int) Math.floor(f - 1)));
+				prominentEffects.add(new EffectInstance(e, e.isInstantenous() ? 1 : crucible.getDuration(), (int) Math.floor(f - 1)));
 			});
-			PotionUtils.addPotionToItemStack(potionstack, Potions.WATER);
-			PotionUtils.appendEffects(potionstack, prominentEffects);
+			PotionUtils.setPotion(potionstack, Potions.WATER);
+			PotionUtils.setCustomEffects(potionstack, prominentEffects);
 
 			if (prominentEffects.size() == 1)
-				potionstack.setDisplayName(
-						new TranslationTextComponent(prominentEffects.get(0).getEffectName()));
+				potionstack.setHoverName(new TranslationTextComponent(prominentEffects.get(0).getDescriptionId()));
 			else
-				potionstack.setDisplayName(new TranslationTextComponent("item.mysticalchemy.concoction"));
+				potionstack.setHoverName(new TranslationTextComponent("item.mysticalchemy.concoction"));
 
-			player.getHeldItem(handIn).shrink(1);
-			if (!player.addItemStackToInventory(potionstack)) {
-				player.entityDropItem(potionstack);
+			player.getItemInHand(handIn).shrink(1);
+			if (!player.addItem(potionstack)) {
+				player.drop(potionstack, false);
 			}
 
-			worldIn.setBlockState(pos, state.with(LEVEL, state.get(LEVEL) - 1));
+			worldIn.setBlock(pos, state.setValue(LEVEL, state.getValue(LEVEL) - 1), 3);
 		}
 	}
 	
@@ -148,18 +146,18 @@ public class BlockCrucible extends CauldronBlock {
 		
 		return new ItemStack(outputPotionItem);
 	}
-
+	
 	@Override
-	public void fillWithRain(World worldIn, BlockPos pos) {
-		TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getTileEntity(pos);
+	public void handleRain(World worldIn, BlockPos pos) {
+		TileEntityCrucible crucible = (TileEntityCrucible) worldIn.getBlockEntity(pos);
 		if (crucible != null && crucible.isPotion())
 			return;
 
-		super.fillWithRain(worldIn, pos);
+		super.handleRain(worldIn, pos);
 	}
-
+	
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
+	public BlockRenderType getRenderShape(BlockState state) {
 		return BlockRenderType.MODEL;
 	}
 

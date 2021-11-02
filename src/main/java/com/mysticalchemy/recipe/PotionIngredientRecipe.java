@@ -43,19 +43,19 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 	
 	@Override
 	public boolean matches(CraftingInventory inv, World worldIn) {
-		if (inv.getSizeInventory() == 1) {
-			return getMatchItems().contains(inv.getStackInSlot(0).getItem());
+		if (inv.getContainerSize() == 1) {
+			return getMatchItems().contains(inv.getItem(0).getItem());
 		}
 		return false;
 	}
 
 	@Override
-	public ItemStack getCraftingResult(CraftingInventory inv) {
+	public ItemStack assemble(CraftingInventory inv) {
 		return new ItemStack(Items.POTION);
 	}
 
 	@Override
-	public boolean canFit(int width, int height) {
+	public boolean canCraftInDimensions(int width, int height) {
 		return width == 1 && height == 1;
 	}
 
@@ -75,7 +75,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 	
 	public ArrayList<Item> getMatchItems(){
 		if (tagResource != null) {
-			matchItems.addAll(ItemTags.getCollection().func_241834_b(tagResource).func_230236_b_());
+			matchItems.addAll(ItemTags.getAllTags().getTag(tagResource).getValues());
 			tagResource = null;
 		}
 		
@@ -98,10 +98,10 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 	{
 		public Serializer(Function<ResourceLocation, PotionIngredientRecipe> patternMap) {
 			super(patternMap);
-		}
+		}		
 		
 		@Override
-		public PotionIngredientRecipe read(ResourceLocation recipeId, JsonObject json) {
+		public PotionIngredientRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
 			PotionIngredientRecipe recipe = new PotionIngredientRecipe(recipeId);
 			
 			if (json.has("item")) {
@@ -152,7 +152,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 		}
 		
 		@Override
-		public PotionIngredientRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
+		public PotionIngredientRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
 			PotionIngredientRecipe recipe = new PotionIngredientRecipe(recipeId);
 			
 			recipe.makesLingering = buffer.readBoolean();
@@ -175,7 +175,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 		}
 		
 		@Override
-		public void write(PacketBuffer buffer, PotionIngredientRecipe recipe) {
+		public void toNetwork(PacketBuffer buffer, PotionIngredientRecipe recipe) {
 			buffer.writeBoolean(recipe.makesLingering);
 			buffer.writeBoolean(recipe.makesSplash);
 			buffer.writeInt(recipe.durationAdded);

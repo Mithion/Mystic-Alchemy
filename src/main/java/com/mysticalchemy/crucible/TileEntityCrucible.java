@@ -43,7 +43,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	public static final int  MAX_DURATION = 9600; //8 minutes
 
 	private static HashMap<Block, Float> heaters;
-	private static HashMap<Biome.Category, Float> biomeCoolRates;
+	private static HashMap<Category, Float> biomeCoolRates;
 
 	static {
 		heaters = new HashMap<Block, Float>();
@@ -52,7 +52,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		heaters.put(Blocks.LAVA, 5.0f);
 		heaters.put(Blocks.ICE, -2.0f);
 
-		biomeCoolRates = new HashMap<Biome.Category, Float>();
+		biomeCoolRates = new HashMap<Category, Float>();
 		biomeCoolRates.put(Category.ICY, 20f);
 		biomeCoolRates.put(Category.EXTREME_HILLS, 10f);
 		biomeCoolRates.put(Category.NETHER, -1.0f);
@@ -67,7 +67,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	private int duration = 600; // default 30 second duration
 
 	private HashMap<Effect, Float> effectStrengths;
-	private Biome.Category myBiome = Biome.Category.NONE;
+	private Category myBiome = Category.NONE;
 	private RecipeManager recipeManager;
 
 	private long targetColor = 12345L;
@@ -85,37 +85,37 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	
 	@Override
 	public void tick() {		
-		int level = this.getBlockState().get(BlockCrucible.LEVEL);
+		int waterLevel = this.getBlockState().getValue(BlockCrucible.LEVEL);
 		
 		//particles and color, client only
-		if (world.isRemote && level > 0) {
-			spawnParticles(level);
+		if (level.isClientSide && waterLevel > 0) {
+			spawnParticles(waterLevel);
 		}
 		
 		// lerp color change over 100 ticks, or 5 seconds.
 		infusePct = MathHelper.clamp(infusePct + 0.01f, 0, 1);
 
 		//limit updates to 2/second
-		if (world.getGameTime() % UPDATE_RATE != 0) {
+		if (level.getGameTime() % UPDATE_RATE != 0) {
 			return;
 		}
 
 		//ensure biome is resolved
 		if (myBiome == Biome.Category.NONE)
-			myBiome = world.getBiome(getPos()).getCategory();
+			myBiome = level.getBiome(getBlockPos()).getBiomeCategory();
 
 		//reset condition
-		if (level == 0) {
+		if (waterLevel == 0) {
 			resetPotion();
 			return;
 		}
 
 		//main update logic
-		tickHeatAndStir(level);
+		tickHeatAndStir(waterLevel);
 	}
 
-	private void tickHeatAndStir(int level) {
-		Block below = world.getBlockState(getPos().down()).getBlock();
+	private void tickHeatAndStir(int waterLevel) {
+		Block below = level.getBlockState(getBlockPos().below()).getBlock();
 		float preHeat = heat;
 		if (heaters.containsKey(below)) {
 			heat = MathHelper.clamp(heat + heaters.get(below), MIN_TEMP, MAX_TEMP);
@@ -131,10 +131,10 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			stir = MathHelper.clamp(stir - 0.005f, 0, 1);
 
 		if (stir == 0 && Math.random() < 0.1f)
-			world.setBlockState(getPos(), getBlockState().with(BlockCrucible.LEVEL, level - 1));
+			level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockCrucible.LEVEL, waterLevel - 1));
 
 		if (heat != preHeat)
-			world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
 	}
 
 	private void resetPotion() {
@@ -148,19 +148,19 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		targetColor = 12345L;
 	}
 
-	private void spawnParticles(int level) {
+	private void spawnParticles(int waterLevel) {
 		if (this.getHeat() > BOIL_POINT) {
 			int numBubbles = (int) Math.ceil(5f * ((this.getHeat() - BOIL_POINT) / (this.getMaxHeat() - BOIL_POINT)));
 	
 			for (int i = 0; i < numBubbles; ++i)
-				world.addParticle(ParticleTypes.BUBBLE_POP, pos.getX() + 0.5 - 0.3 + Math.random() * 0.6,
-						pos.getY() + 0.2 + (0.25f * level), pos.getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
+				level.addParticle(ParticleTypes.BUBBLE_POP, getBlockPos().getX() + 0.5 - 0.3 + Math.random() * 0.6,
+						getBlockPos().getY() + 0.2 + (0.25f * waterLevel), getBlockPos().getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
 						is_splash ? 0.125f : 0, 0);
 		}
 		
 		if (stir < 0.25f) {
-			world.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, pos.getX() + 0.5 - 0.3 + Math.random() * 0.6,
-					pos.getY() + 0.2 + (0.25f * level), pos.getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
+			level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getBlockPos().getX() + 0.5 - 0.3 + Math.random() * 0.6,
+					getBlockPos().getY() + 0.2 + (0.25f * waterLevel), getBlockPos().getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
 					0.01f + (0.25 - stir) * 0.25f, 0);
 		}
 	}
@@ -170,13 +170,13 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			return false;
 		
 		if (recipeManager == null) {
-			recipeManager = world.getRecipeManager();
+			recipeManager = level.getRecipeManager();
 		}
 		if (recipeManager == null)
 			return false;
 
 		Optional<PotionIngredientRecipe> recipe = recipeManager
-				.getRecipes(RecipeInit.POTION_RECIPE_TYPE, createDummyCraftingInventory(stack), world).stream()
+				.getRecipesFor(RecipeInit.POTION_RECIPE_TYPE, createDummyCraftingInventory(stack), level).stream()
 				.findFirst();
 
 		if (recipe.isPresent() && canMerge(recipe.get(), stack.getCount())) {
@@ -195,7 +195,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			//effects
 			mergeEffects(resolved_recipe.getEffects(), stack.getCount());
 			recalculatePotionColor();
-			world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
 			return true;
 		}
 
@@ -212,7 +212,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 
 		long color = 0;
 		for (Effect e : prominents.keySet()) {
-			color += e.getLiquidColor();
+			color += e.getColor();
 		}
 
 		color /= prominents.size();
@@ -271,11 +271,11 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	private CraftingInventory createDummyCraftingInventory(ItemStack stack) {
 		CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType) null, -1) {
 			@Override
-			public boolean canInteractWith(PlayerEntity playerIn) {
+			public boolean stillValid(PlayerEntity playerIn) {
 				return false;
 			}
 		}, 1, 1);
-		craftinginventory.setInventorySlotContents(0, stack);
+		craftinginventory.setItem(0, stack);
 
 		return craftinginventory;
 	}
@@ -298,9 +298,9 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	// ------------------------------------------------------------------
 	// Save / Load
 	// ------------------------------------------------------------------
-
+	
 	@Override
-	public CompoundNBT write(CompoundNBT compound) {
+	public CompoundNBT save(CompoundNBT compound) {
 		compound.putFloat("heat", this.heat);
 		compound.putFloat("stir", this.stir);
 		compound.putBoolean("splash", this.is_splash);
@@ -313,12 +313,12 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			compound.putFloat("effectstr" + count, this.effectStrengths.get(e));
 			count++;
 		}
-		return super.write(compound);
+		return super.save(compound);
 	}
 
 	@Override
-	public void func_230337_a_(BlockState state, CompoundNBT data) {
-		super.func_230337_a_(state, data);
+	public void load(BlockState state, CompoundNBT data) {
+		super.load(state, data);
 
 		if (data.contains("heat"))
 			this.heat = data.getFloat("heat");
@@ -437,23 +437,23 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 
 	@Override
 	public CompoundNBT getUpdateTag() {
-		return write(new CompoundNBT());
+		return save(new CompoundNBT());
 	}
 
 	@Override
 	public void handleUpdateTag(BlockState state, CompoundNBT tag) {
 		super.handleUpdateTag(state, tag);
-		func_230337_a_(state, tag);
+		load(state, tag);
 	}
 
 	@Override
 	public SUpdateTileEntityPacket getUpdatePacket() {
-		return new SUpdateTileEntityPacket(this.pos, 0, getUpdateTag());
+		return new SUpdateTileEntityPacket(this.getBlockPos(), 0, getUpdateTag());
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-		CompoundNBT data = pkt.getNbtCompound();
-		func_230337_a_(getBlockState(), data);
+		CompoundNBT data = pkt.getTag();
+		load(getBlockState(), data);
 	}
 }

@@ -15,20 +15,20 @@ import net.minecraft.world.World;
 
 public class ItemCrucibleSpoon extends Item {
 	public ItemCrucibleSpoon() {
-		super(new Item.Properties().maxStackSize(1).maxDamage(200).group(ItemGroup.BREWING));
+		super(new Item.Properties().stacksTo(1).durability(200).tab(ItemGroup.TAB_BREWING));
 	}
 	
 	@Override
 	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-		World world = context.getWorld();
-		BlockState state = world.getBlockState(context.getPos());
+		World world = context.getLevel();
+		BlockState state = world.getBlockState(context.getClickedPos());
 		if (state.getBlock() == BlockInit.CRUCIBLE.get()) {
-			TileEntityCrucible crucible = (TileEntityCrucible)context.getWorld().getTileEntity(context.getPos());
+			TileEntityCrucible crucible = (TileEntityCrucible)context.getLevel().getBlockEntity(context.getClickedPos());
 			if (crucible != null) {
-				if (!world.isRemote && !context.getPlayer().isCreative())
-					stack.attemptDamageItem(1, world.rand, (ServerPlayerEntity) context.getPlayer());
+				if (!world.isClientSide && !context.getPlayer().isCreative())
+					stack.hurt(1, world.random, (ServerPlayerEntity) context.getPlayer());
 				crucible.stir();
-				world.playSound(context.getPlayer(), context.getPos(), SoundEvents.ENTITY_PLAYER_SPLASH, SoundCategory.BLOCKS, 1.0f, (float) (0.8f + Math.random() * 0.4f));
+				world.playSound(context.getPlayer(), context.getClickedPos(), SoundEvents.PLAYER_SPLASH, SoundCategory.BLOCKS, 1.0f, (float) (0.8f + Math.random() * 0.4f));
 				return ActionResultType.SUCCESS;
 			}
 		}

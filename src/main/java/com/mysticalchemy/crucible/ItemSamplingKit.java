@@ -22,16 +22,16 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties().group(ItemGroup.BREWING));
+		super(new Item.Properties().tab(ItemGroup.TAB_BREWING));
 		this.threshold = threshold;
 	}
 	
 	@Override
 	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
-		BlockState state = context.getWorld().getBlockState(context.getPos());
-		if (state.getBlock() == BlockInit.CRUCIBLE.get() && !context.getWorld().isRemote) {
+		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+		if (state.getBlock() == BlockInit.CRUCIBLE.get() && !context.getLevel().isClientSide) {
 			//get the TE so we can get the potion
-			TileEntityCrucible crucible = (TileEntityCrucible) context.getWorld().getTileEntity(context.getPos());
+			TileEntityCrucible crucible = (TileEntityCrucible) context.getLevel().getBlockEntity(context.getClickedPos());
 			if (crucible == null) //...not good, cheese it!
 				return ActionResultType.FAIL;
 			
@@ -45,7 +45,7 @@ public class ItemSamplingKit extends Item {
 			//spam the player with messages!
 			//first, handle no effects
 			if (allEffects.size() == 0) {
-				context.getPlayer().sendMessage(new TranslationTextComponent("chat.mysticalchemy.no_effects"), Util.field_240973_b_);
+				context.getPlayer().sendMessage(new TranslationTextComponent("chat.mysticalchemy.no_effects"), Util.NIL_UUID);
 				return ActionResultType.SUCCESS;
 			}
 			
@@ -54,11 +54,11 @@ public class ItemSamplingKit extends Item {
 				if (f >= this.threshold) {			
 					IFormattableTextComponent ttc = new TranslationTextComponent("chat.mysticalchemy.format_effect", String.format("%.2f", f), e.getDisplayName().getString());
 					if (f >= 1)
-						ttc = ttc.func_240699_a_(TextFormatting.GREEN);
+						ttc = ttc.withStyle(TextFormatting.GREEN);
 					else
-						ttc = ttc.func_240699_a_(TextFormatting.DARK_RED);
+						ttc = ttc.withStyle(TextFormatting.DARK_RED);
 					
-					context.getPlayer().sendMessage(ttc, Util.field_240973_b_);
+					context.getPlayer().sendMessage(ttc, Util.NIL_UUID);
 				}
 			});
 			
