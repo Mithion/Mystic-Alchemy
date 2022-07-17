@@ -4,10 +4,10 @@ import com.mysticalchemy.MysticAlchemy;
 import com.mysticalchemy.crucible.ItemCrucibleSpoon;
 import com.mysticalchemy.crucible.ItemSamplingKit;
 
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class ItemInit {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MysticAlchemy.MODID);

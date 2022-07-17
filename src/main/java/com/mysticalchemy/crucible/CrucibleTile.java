@@ -4,33 +4,35 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import com.mysticalchemy.config.BrewingConfig;
+import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.RecipeInit;
 import com.mysticalchemy.init.TileEntityInit;
 import com.mysticalchemy.recipe.PotionIngredientRecipe;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.Effect;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.Category;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biome.BiomeCategory;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class TileEntityCrucible extends TileEntity implements ITickableTileEntity {
+public class CrucibleTile extends BlockEntity {
 
 	private static final int UPDATE_RATE = 10;
 	public static final float MIN_TEMP = 0f;
@@ -43,7 +45,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	public static final int  MAX_DURATION = 9600; //8 minutes
 
 	private static HashMap<Block, Float> heaters;
-	private static HashMap<Category, Float> biomeCoolRates;
+	private static HashMap<BiomeCategory, Float> biomeCoolRates;
 
 	static {
 		heaters = new HashMap<Block, Float>();
@@ -52,12 +54,12 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		heaters.put(Blocks.LAVA, 5.0f);
 		heaters.put(Blocks.ICE, -2.0f);
 
-		biomeCoolRates = new HashMap<Category, Float>();
-		biomeCoolRates.put(Category.ICY, 20f);
-		biomeCoolRates.put(Category.EXTREME_HILLS, 10f);
-		biomeCoolRates.put(Category.NETHER, -1.0f);
-		biomeCoolRates.put(Category.DESERT, 0f);
-		biomeCoolRates.put(Category.TAIGA, 10f);
+		biomeCoolRates = new HashMap<BiomeCategory, Float>();
+		biomeCoolRates.put(BiomeCategory.ICY, 20f);
+		biomeCoolRates.put(BiomeCategory.EXTREME_HILLS, 10f);
+		biomeCoolRates.put(BiomeCategory.NETHER, -1.0f);
+		biomeCoolRates.put(BiomeCategory.DESERT, 0f);
+		biomeCoolRates.put(BiomeCategory.TAIGA, 10f);
 	}
 
 	private float heat = MIN_TEMP;
@@ -66,25 +68,29 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	private boolean is_lingering = false;
 	private int duration = 600; // default 30 second duration
 
-	private HashMap<Effect, Float> effectStrengths;
-	private Category myBiome = Category.NONE;
+	private HashMap<MobEffect, Float> effectStrengths;
+	private BiomeCategory myBiome = BiomeCategory.NONE;
 	private RecipeManager recipeManager;
 
 	private long targetColor = 12345L;
 	private long startColor = 12345L;
 	private double infusePct = 1.0f;
 
-	public TileEntityCrucible() {
-		super(TileEntityInit.CRUCIBLE_TILE_TYPE.get());
-		effectStrengths = new HashMap<Effect, Float>();
+	public CrucibleTile(BlockPos pos, BlockState state) {
+		super(TileEntityInit.CRUCIBLE_TILE_TYPE.get(), pos ,state);
+		effectStrengths = new HashMap<MobEffect, Float>();
 	}
 
 	// ------------------------------------------------------------------
 	// Logic / Utilities
 	// ------------------------------------------------------------------
 	
-	@Override
-	public void tick() {		
+	public static void Tick(Level level, BlockPos pos, BlockState state, CrucibleTile blockEntity) { 
+		blockEntity.tick();
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void tick() {		
 		int waterLevel = this.getBlockState().getValue(BlockCrucible.LEVEL);
 		
 		//particles and color, client only
@@ -93,7 +99,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		}
 		
 		// lerp color change over 100 ticks, or 5 seconds.
-		infusePct = MathHelper.clamp(infusePct + 0.01f, 0, 1);
+		infusePct = Mth.clamp(infusePct + 0.01f, 0, 1);
 
 		//limit updates to 2/second
 		if (level.getGameTime() % UPDATE_RATE != 0) {
@@ -101,8 +107,8 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		}
 
 		//ensure biome is resolved
-		if (myBiome == Biome.Category.NONE)
-			myBiome = level.getBiome(getBlockPos()).getBiomeCategory();
+		if (myBiome == Biome.BiomeCategory.NONE)
+			myBiome = Biome.getBiomeCategory(level.getBiome(getBlockPos()));
 
 		//reset condition
 		if (waterLevel == 0) {
@@ -118,20 +124,25 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		Block below = level.getBlockState(getBlockPos().below()).getBlock();
 		float preHeat = heat;
 		if (heaters.containsKey(below)) {
-			heat = MathHelper.clamp(heat + heaters.get(below), MIN_TEMP, MAX_TEMP);
+			heat = Mth.clamp(heat + heaters.get(below), MIN_TEMP, MAX_TEMP);
 		} else if (biomeCoolRates.containsKey(myBiome)) {
-			heat -= MathHelper.clamp(heat - biomeCoolRates.get(myBiome), MIN_TEMP, MAX_TEMP);
+			heat -= Mth.clamp(heat - biomeCoolRates.get(myBiome), MIN_TEMP, MAX_TEMP);
 		} else {
-			heat -= MathHelper.clamp(heat - DEFAULT_COOL_RATE, MIN_TEMP, MAX_TEMP);
+			heat -= Mth.clamp(heat - DEFAULT_COOL_RATE, MIN_TEMP, MAX_TEMP);
 		}
 
 		if (stir > 0.25f)
-			stir = MathHelper.clamp(stir - 0.02f, 0, 1);
+			stir = Mth.clamp(stir - 0.02f, 0, 1);
 		else
-			stir = MathHelper.clamp(stir - 0.005f, 0, 1);
+			stir = Mth.clamp(stir - 0.005f, 0, 1);
 
-		if (stir == 0 && Math.random() < 0.1f)
-			level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockCrucible.LEVEL, waterLevel - 1));
+		if (heat >= BOIL_POINT && stir == 0 && Math.random() < 0.1f) {
+			if (waterLevel == 1) {
+				level.setBlockAndUpdate(getBlockPos(), BlockInit.EMPTY_CRUCIBLE.get().defaultBlockState());
+			}else {
+				level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockCrucible.LEVEL, waterLevel - 1));
+			}
+		}
 
 		if (heat != preHeat)
 			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -156,12 +167,13 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 				level.addParticle(ParticleTypes.BUBBLE_POP, getBlockPos().getX() + 0.5 - 0.3 + Math.random() * 0.6,
 						getBlockPos().getY() + 0.2 + (0.25f * waterLevel), getBlockPos().getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
 						is_splash ? 0.125f : 0, 0);
-		}
 		
-		if (stir < 0.25f) {
-			level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getBlockPos().getX() + 0.5 - 0.3 + Math.random() * 0.6,
-					getBlockPos().getY() + 0.2 + (0.25f * waterLevel), getBlockPos().getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
-					0.01f + (0.25 - stir) * 0.25f, 0);
+		
+			if (stir < 0.25f) {
+				level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE, getBlockPos().getX() + 0.5 - 0.3 + Math.random() * 0.6,
+						getBlockPos().getY() + 0.2 + (0.25f * waterLevel), getBlockPos().getZ() + 0.5 - 0.3 + Math.random() * 0.6, 0,
+						0.01f + (0.25 - stir) * 0.25f, 0);
+			}
 		}
 	}
 
@@ -190,7 +202,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			if (resolved_recipe.getDurationAdded() > 0)
 				duration += resolved_recipe.getDurationAdded() * stack.getCount();
 			
-			heat = MathHelper.clamp(heat - ITEM_HEAT_LOSS * stack.getCount(), MIN_TEMP, MAX_TEMP);
+			heat = Mth.clamp(heat - ITEM_HEAT_LOSS * stack.getCount(), MIN_TEMP, MAX_TEMP);
 			
 			//effects
 			mergeEffects(resolved_recipe.getEffects(), stack.getCount());
@@ -203,7 +215,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	}
 
 	private void recalculatePotionColor() {
-		HashMap<Effect, Float> prominents = getProminentEffects();
+		HashMap<MobEffect, Float> prominents = getProminentEffects();
 		if (prominents.size() == 0) {
 			targetColor = 12345L;
 			infusePct = 1.0f;
@@ -211,7 +223,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		}
 
 		long color = 0;
-		for (Effect e : prominents.keySet()) {
+		for (MobEffect e : prominents.keySet()) {
 			color += e.getColor();
 		}
 
@@ -224,9 +236,9 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	}
 
 	private boolean canMerge(PotionIngredientRecipe recipe, int quantity) {
-		HashMap<Effect, Float> prominent = getProminentEffects();
+		HashMap<MobEffect, Float> prominent = getProminentEffects();
 		
-		for (Effect e : recipe.getEffects().keySet()) {
+		for (MobEffect e : recipe.getEffects().keySet()) {
 			if (e == null) continue;
 			
 			//max effects
@@ -253,7 +265,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		return true;
 	}
 
-	private void mergeEffects(HashMap<Effect, Float> effectList, int quantity) {
+	private void mergeEffects(HashMap<MobEffect, Float> effectList, int quantity) {
 		effectList.forEach((e, f) -> {
 			if (e != null)
 			{			
@@ -267,21 +279,21 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		});
 	}
 
-	@SuppressWarnings("rawtypes")
-	private CraftingInventory createDummyCraftingInventory(ItemStack stack) {
-		CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType) null, -1) {
+	private CraftingContainer createDummyCraftingInventory(ItemStack stack) {
+		CraftingContainer craftinginventory = new CraftingContainer(new AbstractContainerMenu((MenuType<?>) null, -1) {
 			@Override
-			public boolean stillValid(PlayerEntity playerIn) {
+			public boolean stillValid(Player playerIn) {
 				return false;
 			}
 		}, 1, 1);
+		
 		craftinginventory.setItem(0, stack);
 
 		return craftinginventory;
 	}
 
-	public HashMap<Effect, Float> getProminentEffects() {
-		HashMap<Effect, Float> effects = new HashMap<Effect, Float>();
+	public HashMap<MobEffect, Float> getProminentEffects() {
+		HashMap<MobEffect, Float> effects = new HashMap<MobEffect, Float>();
 		effectStrengths.forEach((e, f) -> {
 			if (f >= 1 && !BrewingConfig.isEffectDisabled(e.getRegistryName()))
 				effects.put(e, f);
@@ -291,16 +303,18 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	}
 
 	@SuppressWarnings("unchecked")
-	public HashMap<Effect, Float> getAllEffects(){
-		return (HashMap<Effect, Float>) effectStrengths.clone();
+	public HashMap<MobEffect, Float> getAllEffects(){
+		return (HashMap<MobEffect, Float>) effectStrengths.clone();
 	}
 	
 	// ------------------------------------------------------------------
 	// Save / Load
-	// ------------------------------------------------------------------
+	// ------------------------------------------------------------------	
 	
 	@Override
-	public CompoundNBT save(CompoundNBT compound) {
+	protected void saveAdditional(CompoundTag compound) {		
+		super.saveAdditional(compound);
+		
 		compound.putFloat("heat", this.heat);
 		compound.putFloat("stir", this.stir);
 		compound.putBoolean("splash", this.is_splash);
@@ -308,17 +322,16 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 		compound.putInt("duration", this.duration);
 		compound.putInt("numEffects", this.effectStrengths.size());
 		int count = 0;
-		for (Effect e : this.effectStrengths.keySet()) {
+		for (MobEffect e : this.effectStrengths.keySet()) {
 			compound.putString("effect" + count, e.getRegistryName().toString());
 			compound.putFloat("effectstr" + count, this.effectStrengths.get(e));
 			count++;
 		}
-		return super.save(compound);
 	}
-
+	
 	@Override
-	public void load(BlockState state, CompoundNBT data) {
-		super.load(state, data);
+	public void load(CompoundTag data) {
+		super.load(data);
 
 		if (data.contains("heat"))
 			this.heat = data.getFloat("heat");
@@ -339,7 +352,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 			int count = data.getInt("numEffects");
 			for (int i = 0; i < count; ++i) {
 				if (data.contains("effect" + i) && data.contains("effectstr" + i)) {
-					Effect e = ForgeRegistries.POTIONS.getValue(new ResourceLocation(data.getString("effect" + i)));
+					MobEffect e = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(data.getString("effect" + i)));
 					if (e != null) {
 						effectStrengths.put(e, data.getFloat("effectstr" + i));
 					}
@@ -395,7 +408,7 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	}
 
 	public boolean isPotion() {
-		for (Effect e : effectStrengths.keySet()) {
+		for (MobEffect e : effectStrengths.keySet()) {
 			if (effectStrengths.get(e) >= 1.0f)
 				return true;
 		}
@@ -436,24 +449,19 @@ public class TileEntityCrucible extends TileEntity implements ITickableTileEntit
 	// ------------------------------------------------------------------
 
 	@Override
-	public CompoundNBT getUpdateTag() {
-		return save(new CompoundNBT());
+	public CompoundTag getUpdateTag() {
+		CompoundTag tag = new CompoundTag();
+		saveAdditional(tag);
+		return tag;
+	}	
+
+	@Override
+	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override
-	public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-		super.handleUpdateTag(state, tag);
-		load(state, tag);
-	}
-
-	@Override
-	public SUpdateTileEntityPacket getUpdatePacket() {
-		return new SUpdateTileEntityPacket(this.getBlockPos(), 0, getUpdateTag());
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-		CompoundNBT data = pkt.getTag();
-		load(getBlockState(), data);
+	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+		load(pkt.getTag());
 	}
 }

@@ -1,26 +1,26 @@
 package com.mysticalchemy.crucible;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.resources.ResourceLocation;
 
-public class CrucibleRenderer extends TileEntityRenderer<TileEntityCrucible>{
+public class CrucibleRenderer implements BlockEntityRenderer<CrucibleTile>{
 
-	public CrucibleRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public CrucibleRenderer(BlockEntityRendererProvider.Context context) {
+		
 	}
 
 	@Override
-	public void render(TileEntityCrucible tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(CrucibleTile tileEntityIn, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		if (tileEntityIn.getBlockState().getValue(BlockCrucible.LEVEL) > 0) {
-			IVertexBuilder builder = bufferIn.getBuffer(RenderType.beaconBeam(new ResourceLocation("textures/block/water_still.png"), true));
+			VertexConsumer builder = bufferIn.getBuffer(RenderType.beaconBeam(new ResourceLocation("textures/block/water_still.png"), true));
 			long color = tileEntityIn.getPotionColor();
 			float[] rgb = colorFromLong(color);
 			
@@ -51,7 +51,7 @@ public class CrucibleRenderer extends TileEntityRenderer<TileEntityCrucible>{
 		};
 	}
 	
-	private static void addVertex(IVertexBuilder builder, Matrix4f pos, float x, float y, float z, float u, float v, float[] rgb, int combinedLightIn) {
+	private static void addVertex(VertexConsumer builder, Matrix4f pos, float x, float y, float z, float u, float v, float[] rgb, int combinedLightIn) {
 		builder		
 			.vertex(pos, x, y, z)
 			.color(rgb[0], rgb[1], rgb[2], 1f)

@@ -4,17 +4,17 @@ import java.util.HashMap;
 
 import com.mysticalchemy.init.BlockInit;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.potion.Effect;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemSamplingKit extends Item {
 	//threshold controls what level of ingredients within the potion this will reveal.
@@ -22,51 +22,52 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties().tab(ItemGroup.TAB_BREWING));
+		super(new Item.Properties().tab(CreativeModeTab.TAB_BREWING));
 		this.threshold = threshold;
 	}
 	
 	@Override
-	public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
 		if (state.getBlock() == BlockInit.CRUCIBLE.get() && !context.getLevel().isClientSide) {
 			//get the TE so we can get the potion
-			TileEntityCrucible crucible = (TileEntityCrucible) context.getLevel().getBlockEntity(context.getClickedPos());
+			CrucibleTile crucible = (CrucibleTile) context.getLevel().getBlockEntity(context.getClickedPos());
 			if (crucible == null) //...not good, cheese it!
-				return ActionResultType.FAIL;
+				return InteractionResult.FAIL;
 			
 			//remove the kit
 			if (!context.getPlayer().isCreative())
 				stack.shrink(1);
 			
 			//get the current potion
-			HashMap<Effect, Float> allEffects = crucible.getAllEffects();
+			HashMap<MobEffect, Float> allEffects = crucible.getAllEffects();
 			
 			//spam the player with messages!
 			//first, handle no effects
 			if (allEffects.size() == 0) {
-				context.getPlayer().sendMessage(new TranslationTextComponent("chat.mysticalchemy.no_effects"), Util.NIL_UUID);
-				return ActionResultType.SUCCESS;
+				context.getPlayer().sendMessage(new TranslatableComponent("chat.mysticalchemy.no_effects"), Util.NIL_UUID);
+				return InteractionResult.SUCCESS;
+			}
+			
+			//ensure the test can read the effects
+			if (allEffects.values().stream().noneMatch(f -> f >= this.threshold)) {
+				context.getPlayer().sendMessage(new TranslatableComponent("chat.mysticalchemy.no_notable_effects"), Util.NIL_UUID);
+				return InteractionResult.SUCCESS;
 			}
 			
 			//list out all effects greater than or equal to our threshold
 			allEffects.forEach((e,f) -> {
 				if (f >= this.threshold) {			
-					IFormattableTextComponent ttc = new TranslationTextComponent("chat.mysticalchemy.format_effect", String.format("%.2f", f), e.getDisplayName().getString());
-					if (f >= 1)
-						ttc = ttc.withStyle(TextFormatting.GREEN);
-					else
-						ttc = ttc.withStyle(TextFormatting.DARK_RED);
-					
+					Component ttc = new TranslatableComponent("chat.mysticalchemy.format_effect", String.format("%.2f", f), e.getDisplayName().getString()).withStyle(f >= 1 ? ChatFormatting.GREEN : ChatFormatting.DARK_RED);					
 					context.getPlayer().sendMessage(ttc, Util.NIL_UUID);
 				}
 			});
 			
 			//and done!
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
 		
 		//if here, pass as this isn't something this item handles
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 }

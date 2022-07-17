@@ -1,10 +1,12 @@
 {
 	"block.mysticalchemy.crucible": "Braukessel",
+	"block.mysticalchemy.crucible_empty": "Braukessel",
 	"item.mysticalchemy.concoction": "Mystisches Gebräu",
 	"item.mysticalchemy.crucible_spoon": "Rührlöffel",
 	"item.mysticalchemy.simple_sampling_kit": "Einfaches Probenahme-Kit",
 	"item.mysticalchemy.advanced_sampling_kit": "Fortgeschrittenes Probenahme-Kit",	
 	
 	"chat.mysticalchemy.no_effects": "Es gibt keine Effekte in diesem Trank.",
+	"chat.mysticalchemy.no_notable_effects": "Es gibt keine Effekte in dem Trank, die dieses Kit lesen kann.",
 	"chat.mysticalchemy.format_effect": "%s: %s"
 }

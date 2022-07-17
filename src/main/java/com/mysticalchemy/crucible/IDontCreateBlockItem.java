@@ -17,17 +17,8 @@
  */
 
 
-package com.mysticalchemy.init;
+package com.mysticalchemy.crucible;
 
-import com.mysticalchemy.crucible.CrucibleRenderer;
+public interface IDontCreateBlockItem {
 
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-
-public class TileEntityClientInit {	
-	@SubscribeEvent
-	public static void onClientSetupEvent(FMLClientSetupEvent event) {	
-		BlockEntityRenderers.register(TileEntityInit.CRUCIBLE_TILE_TYPE.get(), CrucibleRenderer::new);
-	}	
 }

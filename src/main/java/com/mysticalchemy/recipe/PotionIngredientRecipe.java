@@ -10,25 +10,25 @@ import com.google.gson.JsonObject;
 import com.mysticalchemy.MysticAlchemy;
 import com.mysticalchemy.init.RecipeInit;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.Effect;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 
-public class PotionIngredientRecipe extends SpecialRecipe {
+public class PotionIngredientRecipe extends CustomRecipe {
 
 	private ArrayList<Item> matchItems;
-	private HashMap<Effect, Float> effects;
+	private HashMap<MobEffect, Float> effects;
 	private boolean makesSplash = false;
 	private boolean makesLingering = false;
 	private int durationAdded = 0;
@@ -38,19 +38,20 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 	public PotionIngredientRecipe(ResourceLocation idIn) {
 		super(idIn);
 		matchItems = new ArrayList<Item>();
-		effects = new HashMap<Effect, Float>();
+		effects = new HashMap<MobEffect, Float>();
 	}
 	
 	@Override
-	public boolean matches(CraftingInventory inv, World worldIn) {
+	public boolean matches(CraftingContainer inv, Level worldIn) {
 		if (inv.getContainerSize() == 1) {
 			return getMatchItems().contains(inv.getItem(0).getItem());
 		}
 		return false;
 	}
+	
 
 	@Override
-	public ItemStack assemble(CraftingInventory inv) {
+	public ItemStack assemble(CraftingContainer inv) {
 		return new ItemStack(Items.POTION);
 	}
 
@@ -60,23 +61,28 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 	}
 
 	@Override
-	public IRecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<?> getSerializer() {
 		return RecipeInit.POTION_INGREDIENT_SERIALIZER.get();
 	}
 
 	@Override
-	public IRecipeType<?> getType() {
+	public RecipeType<?> getType() {
 		return RecipeInit.POTION_RECIPE_TYPE;
 	}
 	
-	public HashMap<Effect,Float> getEffects(){		
+	public HashMap<MobEffect,Float> getEffects(){		
 		return effects;
 	}
 	
 	public ArrayList<Item> getMatchItems(){
 		if (tagResource != null) {
-			matchItems.addAll(ItemTags.getAllTags().getTag(tagResource).getValues());
-			tagResource = null;
+			ITag<Item> tag = ForgeRegistries.ITEMS.tags().getTag(ForgeRegistries.ITEMS.tags().createTagKey(tagResource));
+			if (tag != null) {
+				tag.iterator().forEachRemaining(i -> {
+					matchItems.add(i);
+				});
+			}
+			tagResource = null;			
 		}
 		
 		return matchItems;
@@ -94,7 +100,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 		return durationAdded;
 	}
 	
-	public static class Serializer extends SpecialRecipeSerializer<PotionIngredientRecipe>
+	public static class Serializer extends SimpleRecipeSerializer<PotionIngredientRecipe>
 	{
 		public Serializer(Function<ResourceLocation, PotionIngredientRecipe> patternMap) {
 			super(patternMap);
@@ -120,7 +126,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 						if (e.isJsonObject()) {
 							JsonObject eObj = e.getAsJsonObject();
 							if (eObj.has("effect") && eObj.has("strength")) {
-								Effect eff = ForgeRegistries.POTIONS.getValue(new ResourceLocation(eObj.get("effect").getAsString()));
+								MobEffect eff = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(eObj.get("effect").getAsString()));
 								if (eff != null)
 									recipe.effects.put(eff, eObj.get("strength").getAsFloat());
 								else
@@ -152,7 +158,7 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 		}
 		
 		@Override
-		public PotionIngredientRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+		public PotionIngredientRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
 			PotionIngredientRecipe recipe = new PotionIngredientRecipe(recipeId);
 			
 			recipe.makesLingering = buffer.readBoolean();
@@ -169,13 +175,13 @@ public class PotionIngredientRecipe extends SpecialRecipe {
 			
 			int numEffects = buffer.readInt();
 			for (int i = 0; i < numEffects; ++i)
-				recipe.effects.put(ForgeRegistries.POTIONS.getValue(buffer.readResourceLocation()), buffer.readFloat());
+				recipe.effects.put(ForgeRegistries.MOB_EFFECTS.getValue(buffer.readResourceLocation()), buffer.readFloat());
 			
 			return recipe;
 		}
 		
 		@Override
-		public void toNetwork(PacketBuffer buffer, PotionIngredientRecipe recipe) {
+		public void toNetwork(FriendlyByteBuf buffer, PotionIngredientRecipe recipe) {
 			buffer.writeBoolean(recipe.makesLingering);
 			buffer.writeBoolean(recipe.makesSplash);
 			buffer.writeInt(recipe.durationAdded);

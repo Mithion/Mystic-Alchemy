@@ -16,13 +16,13 @@ Expands potions and brewing in the game to be more dynamic, and magical.
 [[dependencies.mysticalchemy]]
     modId="forge"
     mandatory=true
-    versionRange="[35,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
     
 [[dependencies.mysticalchemy]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.4]"
+    versionRange="[1.18.2]"
     ordering="NONE"
     side="BOTH"
