@@ -3,7 +3,7 @@
 	"item": "minecraft:rabbit_foot",
 	"effects": [
 		{
-			"effect": "minecraft:haste",
+			"effect": "minecraft:speed",
 			"strength": 0.5
 		},
 		{

@@ -9,10 +9,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class TileEntityInit {
-public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, MysticAlchemy.MODID);
+public static final DeferredRegister<BlockEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MysticAlchemy.MODID);
 	
 	public static final RegistryObject<BlockEntityType<CrucibleTile>> CRUCIBLE_TILE_TYPE = TILE_ENTITY_TYPES.register(
-			"chalk_rune_tile_entity", 
+			"crucible_tile", 
 			() -> BlockEntityType.Builder.of(CrucibleTile::new, 
 					BlockInit.CRUCIBLE.get()
 			).build(null));

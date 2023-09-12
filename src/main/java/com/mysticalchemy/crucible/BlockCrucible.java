@@ -3,7 +3,6 @@ package com.mysticalchemy.crucible;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
@@ -11,9 +10,10 @@ import com.mysticalchemy.init.TileEntityInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -39,8 +39,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, IDontCreateBlockItem {
 	public BlockCrucible() {
@@ -82,20 +80,19 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			}
 		}
 	}
-
+	
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
-		if (worldIn.isClientSide && stateIn.getValue(LEVEL) > 0) {
-			CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
-			if (crucible != null && crucible.getHeat() > 0) {
+	public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
+		if (pLevel.isClientSide && pState.getValue(LEVEL) > 0) {
+			CrucibleTile crucible = (CrucibleTile) pLevel.getBlockEntity(pPos);
+			if (crucible != null && crucible.getHeat() >= CrucibleTile.BOIL_POINT) {
 				Minecraft mc = Minecraft.getInstance();
-				worldIn.playSound(mc.player, pos, SoundEvents.LAVA_POP, SoundSource.BLOCKS,
+				pLevel.playSound(mc.player, pPos, SoundEvents.LAVA_POP, SoundSource.BLOCKS,
 						1.0f, (float) (0.8f + Math.random() * 0.4f));
 			}
 		}
 	}
-
+	
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
 		CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
@@ -135,9 +132,9 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			PotionUtils.setCustomEffects(potionstack, prominentEffects);
 
 			if (prominentEffects.size() == 1)
-				potionstack.setHoverName(new TranslatableComponent(prominentEffects.get(0).getDescriptionId()));
+				potionstack.setHoverName(Component.translatable(prominentEffects.get(0).getDescriptionId()));
 			else
-				potionstack.setHoverName(new TranslatableComponent("item.mysticalchemy.concoction"));
+				potionstack.setHoverName(Component.translatable("item.mysticalchemy.concoction"));
 
 			player.getItemInHand(handIn).shrink(1);
 			if (!player.addItem(potionstack)) {

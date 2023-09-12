@@ -2,7 +2,6 @@ package com.mysticalchemy.recipe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.function.Function;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,10 +16,10 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITag;
@@ -36,7 +35,7 @@ public class PotionIngredientRecipe extends CustomRecipe {
 	private ResourceLocation tagResource = null;
 	
 	public PotionIngredientRecipe(ResourceLocation idIn) {
-		super(idIn);
+		super(idIn, CraftingBookCategory.MISC);
 		matchItems = new ArrayList<Item>();
 		effects = new HashMap<MobEffect, Float>();
 	}
@@ -100,12 +99,8 @@ public class PotionIngredientRecipe extends CustomRecipe {
 		return durationAdded;
 	}
 	
-	public static class Serializer extends SimpleRecipeSerializer<PotionIngredientRecipe>
-	{
-		public Serializer(Function<ResourceLocation, PotionIngredientRecipe> patternMap) {
-			super(patternMap);
-		}		
-		
+	public static class Serializer implements RecipeSerializer<PotionIngredientRecipe>
+	{		
 		@Override
 		public PotionIngredientRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
 			PotionIngredientRecipe recipe = new PotionIngredientRecipe(recipeId);
@@ -191,11 +186,11 @@ public class PotionIngredientRecipe extends CustomRecipe {
 				buffer.writeResourceLocation(recipe.tagResource);
 			
 			buffer.writeInt(recipe.matchItems.size());
-			recipe.matchItems.forEach(i -> buffer.writeResourceLocation(i.getRegistryName()));
+			recipe.matchItems.forEach(i -> buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(i)));
 			
 			buffer.writeInt(recipe.effects.size());
 			recipe.effects.forEach((e,f) -> {
-				buffer.writeResourceLocation(e.getRegistryName());
+				buffer.writeResourceLocation(ForgeRegistries.MOB_EFFECTS.getKey(e));
 				buffer.writeFloat(f);
 			});
 		}

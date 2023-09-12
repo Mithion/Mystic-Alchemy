@@ -25,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biome.BiomeCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -39,13 +38,11 @@ public class CrucibleTile extends BlockEntity {
 	public static final float MAX_TEMP = 200f;
 	public static final float BOIL_POINT = 100f;
 	public static final float ITEM_HEAT_LOSS = 25f;
-	public static final float DEFAULT_COOL_RATE = 5.0f;
 	public static final int MAX_MAGNITUDE = 3; // TODO: configurable, per potion effect
 	public static final int MAX_EFFECTS = 4;
 	public static final int  MAX_DURATION = 9600; //8 minutes
 
 	private static HashMap<Block, Float> heaters;
-	private static HashMap<BiomeCategory, Float> biomeCoolRates;
 
 	static {
 		heaters = new HashMap<Block, Float>();
@@ -53,13 +50,6 @@ public class CrucibleTile extends BlockEntity {
 		heaters.put(Blocks.FIRE, 2.0f);
 		heaters.put(Blocks.LAVA, 5.0f);
 		heaters.put(Blocks.ICE, -2.0f);
-
-		biomeCoolRates = new HashMap<BiomeCategory, Float>();
-		biomeCoolRates.put(BiomeCategory.ICY, 20f);
-		biomeCoolRates.put(BiomeCategory.EXTREME_HILLS, 10f);
-		biomeCoolRates.put(BiomeCategory.NETHER, -1.0f);
-		biomeCoolRates.put(BiomeCategory.DESERT, 0f);
-		biomeCoolRates.put(BiomeCategory.TAIGA, 10f);
 	}
 
 	private float heat = MIN_TEMP;
@@ -69,8 +59,8 @@ public class CrucibleTile extends BlockEntity {
 	private int duration = 600; // default 30 second duration
 
 	private HashMap<MobEffect, Float> effectStrengths;
-	private BiomeCategory myBiome = BiomeCategory.NONE;
 	private RecipeManager recipeManager;
+	private Biome myBiome;
 
 	private long targetColor = 12345L;
 	private long startColor = 12345L;
@@ -89,7 +79,6 @@ public class CrucibleTile extends BlockEntity {
 		blockEntity.tick();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void tick() {		
 		int waterLevel = this.getBlockState().getValue(BlockCrucible.LEVEL);
 		
@@ -105,10 +94,11 @@ public class CrucibleTile extends BlockEntity {
 		if (level.getGameTime() % UPDATE_RATE != 0) {
 			return;
 		}
-
-		//ensure biome is resolved
-		if (myBiome == Biome.BiomeCategory.NONE)
-			myBiome = Biome.getBiomeCategory(level.getBiome(getBlockPos()));
+		
+		//ensure biome is set
+		if (myBiome == null) {
+			myBiome = this.level.getBiome(worldPosition).get();
+		}
 
 		//reset condition
 		if (waterLevel == 0) {
@@ -125,10 +115,8 @@ public class CrucibleTile extends BlockEntity {
 		float preHeat = heat;
 		if (heaters.containsKey(below)) {
 			heat = Mth.clamp(heat + heaters.get(below), MIN_TEMP, MAX_TEMP);
-		} else if (biomeCoolRates.containsKey(myBiome)) {
-			heat -= Mth.clamp(heat - biomeCoolRates.get(myBiome), MIN_TEMP, MAX_TEMP);
 		} else {
-			heat -= Mth.clamp(heat - DEFAULT_COOL_RATE, MIN_TEMP, MAX_TEMP);
+			heat = Mth.clamp(heat - (1 - myBiome.getBaseTemperature()) * 10, MIN_TEMP, MAX_TEMP);
 		}
 
 		if (stir > 0.25f)
@@ -269,7 +257,8 @@ public class CrucibleTile extends BlockEntity {
 		effectList.forEach((e, f) -> {
 			if (e != null)
 			{			
-				if (BrewingConfig.isEffectDisabled(e.getRegistryName())) return;
+				ResourceLocation key = ForgeRegistries.MOB_EFFECTS.getKey(e);
+				if (key != null && BrewingConfig.isEffectDisabled(key)) return;
 				
 				if (effectStrengths.containsKey(e))
 					effectStrengths.put(e, Math.min(effectStrengths.get(e) + (f * quantity), MAX_MAGNITUDE));
@@ -285,6 +274,11 @@ public class CrucibleTile extends BlockEntity {
 			public boolean stillValid(Player playerIn) {
 				return false;
 			}
+
+			@Override
+			public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
+				return ItemStack.EMPTY;
+			}
 		}, 1, 1);
 		
 		craftinginventory.setItem(0, stack);
@@ -295,7 +289,7 @@ public class CrucibleTile extends BlockEntity {
 	public HashMap<MobEffect, Float> getProminentEffects() {
 		HashMap<MobEffect, Float> effects = new HashMap<MobEffect, Float>();
 		effectStrengths.forEach((e, f) -> {
-			if (f >= 1 && !BrewingConfig.isEffectDisabled(e.getRegistryName()))
+			if (f >= 1 && !BrewingConfig.isEffectDisabled(ForgeRegistries.MOB_EFFECTS.getKey(e)))
 				effects.put(e, f);
 		});
 
@@ -323,7 +317,7 @@ public class CrucibleTile extends BlockEntity {
 		compound.putInt("numEffects", this.effectStrengths.size());
 		int count = 0;
 		for (MobEffect e : this.effectStrengths.keySet()) {
-			compound.putString("effect" + count, e.getRegistryName().toString());
+			compound.putString("effect" + count, ForgeRegistries.MOB_EFFECTS.getKey(e).toString());
 			compound.putFloat("effectstr" + count, this.effectStrengths.get(e));
 			count++;
 		}

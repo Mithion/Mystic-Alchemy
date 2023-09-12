@@ -5,12 +5,9 @@ import java.util.HashMap;
 import com.mysticalchemy.init.BlockInit;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -22,7 +19,7 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties().tab(CreativeModeTab.TAB_BREWING));
+		super(new Item.Properties());
 		this.threshold = threshold;
 	}
 	
@@ -45,21 +42,21 @@ public class ItemSamplingKit extends Item {
 			//spam the player with messages!
 			//first, handle no effects
 			if (allEffects.size() == 0) {
-				context.getPlayer().sendMessage(new TranslatableComponent("chat.mysticalchemy.no_effects"), Util.NIL_UUID);
+				context.getPlayer().sendSystemMessage(Component.translatable("chat.mysticalchemy.no_effects"));
 				return InteractionResult.SUCCESS;
 			}
 			
 			//ensure the test can read the effects
 			if (allEffects.values().stream().noneMatch(f -> f >= this.threshold)) {
-				context.getPlayer().sendMessage(new TranslatableComponent("chat.mysticalchemy.no_notable_effects"), Util.NIL_UUID);
+				context.getPlayer().sendSystemMessage(Component.translatable("chat.mysticalchemy.no_notable_effects"));
 				return InteractionResult.SUCCESS;
 			}
 			
 			//list out all effects greater than or equal to our threshold
 			allEffects.forEach((e,f) -> {
 				if (f >= this.threshold) {			
-					Component ttc = new TranslatableComponent("chat.mysticalchemy.format_effect", String.format("%.2f", f), e.getDisplayName().getString()).withStyle(f >= 1 ? ChatFormatting.GREEN : ChatFormatting.DARK_RED);					
-					context.getPlayer().sendMessage(ttc, Util.NIL_UUID);
+					Component ttc = Component.translatable("chat.mysticalchemy.format_effect", String.format("%.2f", f), e.getDisplayName().getString()).withStyle(f >= 1 ? ChatFormatting.GREEN : ChatFormatting.DARK_RED);					
+					context.getPlayer().sendSystemMessage(ttc);
 				}
 			});
 			
