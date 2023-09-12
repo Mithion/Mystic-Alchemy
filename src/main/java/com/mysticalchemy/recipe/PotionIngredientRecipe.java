@@ -16,7 +16,6 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -35,7 +34,7 @@ public class PotionIngredientRecipe extends CustomRecipe {
 	private ResourceLocation tagResource = null;
 	
 	public PotionIngredientRecipe(ResourceLocation idIn) {
-		super(idIn, CraftingBookCategory.MISC);
+		super(idIn);
 		matchItems = new ArrayList<Item>();
 		effects = new HashMap<MobEffect, Float>();
 	}

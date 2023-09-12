@@ -33,7 +33,7 @@ public class BlockEmptyCrucible extends AbstractCauldronBlock{
 	public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
 	      ItemStack itemstack = pPlayer.getItemInHand(pHand);
 	      CauldronInteraction cauldroninteraction = CauldronInteraction.WATER.get(itemstack.getItem());
-	      if (cauldroninteraction != null) {
+	      if (cauldroninteraction != null && (cauldroninteraction == CauldronInteraction.FILL_WATER || cauldroninteraction == CauldronInteraction.WATER)) {
 	    	  InteractionResult res = cauldroninteraction.interact(pState, pLevel, pPos, pPlayer, pHand, itemstack);
 	    	  if (pLevel.getBlockState(pPos).getBlock() == Blocks.WATER_CAULDRON) {
 	    		  pLevel.setBlock(pPos, BlockInit.CRUCIBLE.get().defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3), UPDATE_ALL);

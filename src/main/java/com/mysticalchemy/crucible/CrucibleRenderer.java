@@ -1,9 +1,9 @@
 package com.mysticalchemy.crucible;
 
-import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix4f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,7 +25,7 @@ public class CrucibleRenderer implements BlockEntityRenderer<CrucibleTile>{
 			long color = tileEntityIn.getPotionColor();
 			float[] rgb = colorFromLong(color);
 			
-			Matrix4f mat = matrixStackIn.last().pose();
+			Matrix4f mat = matrixStackIn.last().m_85861_();
 			int frames = 16;
 			float frameSize = 1f / frames;
 			long frame = (tileEntityIn.getLevel().getGameTime() / 3) % frames;
@@ -54,7 +54,7 @@ public class CrucibleRenderer implements BlockEntityRenderer<CrucibleTile>{
 	
 	private static void addVertex(VertexConsumer builder, Matrix4f pos, float x, float y, float z, float u, float v, float[] rgb, int combinedLightIn) {
 		builder		
-			.vertex(pos, x, y, z)
+			.m_85982_(pos, x, y, z)
 			.color(rgb[0], rgb[1], rgb[2], 1f)
 			.uv(u, v)
 			.overlayCoords(OverlayTexture.NO_OVERLAY)

@@ -88,7 +88,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-   minecraft 'net.minecraftforge:forge:1.19.3-44.1.17'
+   minecraft 'net.minecraftforge:forge:1.19.2-43.2.23'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

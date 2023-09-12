@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -19,7 +20,7 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties());
+		super(new Item.Properties().m_41491_(CreativeModeTab.f_40758_));
 		this.threshold = threshold;
 	}
 	

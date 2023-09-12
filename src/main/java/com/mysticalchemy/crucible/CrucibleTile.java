@@ -107,7 +107,9 @@ public class CrucibleTile extends BlockEntity {
 		}
 
 		//main update logic
-		tickHeatAndStir(waterLevel);
+		if (!level.isClientSide()){
+			tickHeatAndStir(waterLevel);
+		}
 	}
 
 	private void tickHeatAndStir(int waterLevel) {

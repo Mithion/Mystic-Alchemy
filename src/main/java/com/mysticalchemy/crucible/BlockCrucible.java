@@ -114,6 +114,10 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 		if (itemstack.getItem() == Items.WATER_BUCKET) {
 			worldIn.setBlock(pos, state.setValue(LayeredCauldronBlock.LEVEL, 3), UPDATE_ALL);
 			return InteractionResult.sidedSuccess(worldIn.isClientSide);
+		}else if (itemstack.getItem() == Items.BUCKET){
+			worldIn.setBlock(pos, BlockInit.EMPTY_CRUCIBLE.get().defaultBlockState(), UPDATE_ALL);
+			player.setItemInHand(handIn, new ItemStack(Items.WATER_BUCKET));
+			return InteractionResult.sidedSuccess(worldIn.isClientSide);
 		}
 		
 		return InteractionResult.FAIL;

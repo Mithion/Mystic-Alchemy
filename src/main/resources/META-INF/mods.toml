@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/Mithion/Mystic-Alchemy/issues"
 
 [[mods]]
 modId="mysticalchemy"
-version="0.1.0"
+version="0.2.0"
 displayName="Mystic Alchemy"
 credits="Thanks to the M&A community for helping me with ideas!  Thanks to Geolykt for the translation!"
 authors="Mithion"
@@ -23,6 +23,6 @@ Expands potions and brewing in the game to be more dynamic, and magical.
 [[dependencies.mysticalchemy]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,1.20)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="BOTH"
