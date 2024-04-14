@@ -1,14 +1,11 @@
 package com.mysticalchemy.recipe;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mysticalchemy.MysticAlchemy;
 import com.mysticalchemy.init.RecipeInit;
-
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
@@ -16,12 +13,16 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITag;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PotionIngredientRecipe extends CustomRecipe {
 
@@ -34,7 +35,7 @@ public class PotionIngredientRecipe extends CustomRecipe {
 	private ResourceLocation tagResource = null;
 	
 	public PotionIngredientRecipe(ResourceLocation idIn) {
-		super(idIn);
+		super(idIn, CraftingBookCategory.MISC);
 		matchItems = new ArrayList<Item>();
 		effects = new HashMap<MobEffect, Float>();
 	}
@@ -46,10 +47,9 @@ public class PotionIngredientRecipe extends CustomRecipe {
 		}
 		return false;
 	}
-	
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv) {
+	public ItemStack assemble(CraftingContainer pContainer, RegistryAccess pRegistryAccess) {
 		return new ItemStack(Items.POTION);
 	}
 
@@ -65,7 +65,7 @@ public class PotionIngredientRecipe extends CustomRecipe {
 
 	@Override
 	public RecipeType<?> getType() {
-		return RecipeInit.POTION_RECIPE_TYPE;
+		return RecipeInit.POTION_RECIPE_TYPE.get();
 	}
 	
 	public HashMap<MobEffect,Float> getEffects(){		

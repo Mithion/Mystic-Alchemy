@@ -1,5 +1,6 @@
 package com.mysticalchemy.crucible;
 
+import java.beans.Transient;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -18,9 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -178,7 +177,7 @@ public class CrucibleTile extends BlockEntity {
 			return false;
 
 		Optional<PotionIngredientRecipe> recipe = recipeManager
-				.getRecipesFor(RecipeInit.POTION_RECIPE_TYPE, createDummyCraftingInventory(stack), level).stream()
+				.getRecipesFor(RecipeInit.POTION_RECIPE_TYPE.get(), createDummyCraftingInventory(stack), level).stream()
 				.findFirst();
 
 		if (recipe.isPresent() && canMerge(recipe.get(), stack.getCount())) {
@@ -271,7 +270,7 @@ public class CrucibleTile extends BlockEntity {
 	}
 
 	private CraftingContainer createDummyCraftingInventory(ItemStack stack) {
-		CraftingContainer craftinginventory = new CraftingContainer(new AbstractContainerMenu((MenuType<?>) null, -1) {
+		CraftingContainer craftinginventory = new TransientCraftingContainer(new AbstractContainerMenu((MenuType<?>) null, -1) {
 			@Override
 			public boolean stillValid(Player playerIn) {
 				return false;

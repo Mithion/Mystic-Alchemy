@@ -1,85 +1,76 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://maven.parchmentmc.org' } // Adds parchment support
+        maven { url = 'https://plugins.gradle.org/m2/' } // Required for CurseGradle
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } // Required by geckolib
+        maven { url = 'https://maven.neoforged.net/releases' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'net.neoforged', name: 'NeoGradle', version: '6.0.+', changing: true
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0' //CurseForge Gradle Plugin
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
         classpath 'org.parchmentmc:librarian:1.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
+apply plugin: 'net.neoforged.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+apply plugin: "com.matthewprenger.cursegradle"
+apply plugin: 'org.spongepowered.mixin'
 
+version = "${minecraft_version}-${api_name}-${mod_version}"
+group = "${mod_group}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+base {
+    archivesName = "${minecraft_version}-${api_name}-${mod_version}"
+}
 
-version = "${build_version}"
-group = 'com.mithion.mysticalchemy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'mystic_alchemy'
-
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-
-    mappings channel: 'parchment', version: '1.19.2-2022.08.14-1.19.3'
+    // The mappings can be changed at any time and must be in the following format.
+    // Channel:   Version:
+    // snapshot   YYYYMMDD   Snapshot are built nightly.
+    // stable     #          Stables are built at the discretion of the MCP team.
+    // official   MCVersion  Official field/method names from Mojang mapping files
+    //
+    // You must be aware of the Mojang license when using the 'official' mappings.
+    // See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
+    //
+    // Use non-default mappings at your own risk. They may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: "${mappings_channel}", version: "${mappings_version}"
+    copyIdeResources = true
 
     runs {
-        client {
-            workingDirectory project.file('run')
+        configureEach {
+            workingDirectory project.file("run/${it.name}")
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'mysticalchemy'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
 
             mods {
-                mysticalchemy {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
+        }
+
+        client {
+            args '--username', 'Dev'
         }
 
         server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'mysticalchemy'
-
-            mods {
-                mysticalchemy {
-                    source sourceSets.main
-                }
-            }
-        }
-        
-        gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-			
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'mysticalchemy'
-
-            mods {
-                fxbuildup {
-                    source sourceSets.main
-                }
-            }
+            args '--nogui'
         }
 
         data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'mystic-alchemy', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                mysticalchemy {
-                    source sourceSets.main
-                }
-            }
+            args '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }
     }
 }
@@ -87,40 +78,72 @@ minecraft {
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-dependencies {
-   minecraft 'net.minecraftforge:forge:1.19.2-43.2.23'
-}
-
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    manifest {
-        attributes([
-            "Specification-Title": "Mystic Alchemy",
-            "Specification-Vendor": "Mithion",
-            "Specification-Version": "${build_version}",
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Mithion",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),   
-        ])
+repositories {
+    maven {
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    flatDir {
+        dirs "libs"
     }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
+dependencies {
+    minecraft "net.neoforged:forge:${minecraft_version}-${api_version}"
+
+    // these mods are included only for the purpose of testing
+    runtimeOnly fg.deobf("curse.maven:jei-${jei_projectId}:${jei_fileId}")
+    runtimeOnly fg.deobf("curse.maven:betteradvancements-${advancements_projectId}:${advancements_fileId}")
+}
+
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version       : minecraft_version, minecraft_version_range: minecraft_version_range,
+            api_version             : api_version, api_version_range: api_version_range, api_name: api_name,
+            loader_version_range    : loader_version_range,
+            mod_id                  : mod_id, mod_description: mod_description, mod_name: mod_name, mod_logo: mod_logo,
+            mod_license             : mod_license, mod_version: mod_version, mod_authors: mod_authors,
+            mod_credits             : mod_credits, mod_issues: mod_issues
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1', // We are version 1 of ourselves
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    // This is the preferred method to reobfuscate your jar file
+    finalizedBy 'reobfJar'
+}
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
+        register('mavenJava', MavenPublication) {
+            from components.java
         }
     }
     repositories {
         maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+            url "file://${project.projectDir}/repo"
         }
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }

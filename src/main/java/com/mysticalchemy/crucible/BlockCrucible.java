@@ -1,12 +1,7 @@
 package com.mysticalchemy.crucible;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -16,7 +11,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -30,19 +24,24 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, IDontCreateBlockItem {
 	public BlockCrucible() {
-		super(Properties.of(Material.METAL).noOcclusion().strength(3.0f), LayeredCauldronBlock.RAIN, CauldronInteraction.WATER);
+		super(BlockBehaviour.Properties.copy(Blocks.CAULDRON).noOcclusion().strength(3.0f), LayeredCauldronBlock.RAIN, CauldronInteraction.WATER);
 	}
 	
 	@Override
@@ -75,7 +74,7 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			} else if (entityIn instanceof LivingEntity) {
 				CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
 				if (crucible != null && crucible.getHeat() > crucible.getMaxHeat() / 2) {
-					((LivingEntity) entityIn).hurt(DamageSource.IN_FIRE, 1);
+					entityIn.hurt(worldIn.damageSources().inFire(), 1);
 				}
 			}
 		}
@@ -98,7 +97,7 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 		CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
 		if (crucible != null && state.getValue(LEVEL) > 0) {
 			HashMap<MobEffect, Float> prominents = crucible.getProminentEffects();
-			if (prominents.size() > 0) {
+			if (!prominents.isEmpty()) {
 				// if there are prominents and the player is using a glass bottle, assume
 				// extracting current potion.
 				if (player.getItemInHand(handIn).getItem() == Items.GLASS_BOTTLE) {

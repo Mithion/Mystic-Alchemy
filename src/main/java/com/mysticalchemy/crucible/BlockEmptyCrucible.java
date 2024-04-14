@@ -1,7 +1,6 @@
 package com.mysticalchemy.crucible;
 
 import com.mysticalchemy.init.BlockInit;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.tags.FluidTags;
@@ -15,18 +14,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class BlockEmptyCrucible extends AbstractCauldronBlock{
 	private static final float RAIN_FILL_CHANCE = 0.05F;
 
 	public BlockEmptyCrucible() {
-		super(Properties.of(Material.METAL).noOcclusion().strength(3.0f), CauldronInteraction.EMPTY);
+		super(BlockBehaviour.Properties.copy(Blocks.CAULDRON).noOcclusion().strength(3.0f), CauldronInteraction.EMPTY);
 	}
 	
 	@Override
