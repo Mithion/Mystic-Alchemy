@@ -4,7 +4,7 @@ license="All Rights Reserved"
 
 [[mods]] #mandatory
 modId="mysticalchemy"
-version="0.2.0"
+version="0.3.0"
 displayName="Mystic Alchemy"
 issueTrackerURL="https://github.com/Mithion/Mystic-Alchemy/issues"
 
