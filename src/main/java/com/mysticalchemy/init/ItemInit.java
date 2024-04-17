@@ -14,9 +14,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
-
 
 @Mod.EventBusSubscriber(modid = MysticAlchemy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemInit {
