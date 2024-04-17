@@ -1,13 +1,13 @@
 {
 	"type": "mysticalchemy:potion_ingredient",
-	"item": "mana-and-artifice:purified_vinteum_dust",
+	"item": "mna:purified_vinteum_dust",
 	"effects": [
 		{
-			"effect": "mana-and-artifice:mana-regen",
+			"effect": "mna:mana-regen",
 			"strength": 1
 		},
 		{
-			"effect": "mana-and-artifice:mana-boost",
+			"effect": "mna:mana-boost",
 			"strength": 0.5
 		}
 	]

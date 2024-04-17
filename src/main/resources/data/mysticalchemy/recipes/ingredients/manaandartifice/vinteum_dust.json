@@ -1,9 +1,9 @@
 {
 	"type": "mysticalchemy:potion_ingredient",
-	"item": "mana-and-artifice:vinteum_dust",
+	"item": "mna:vinteum_dust",
 	"effects": [
 		{
-			"effect": "mana-and-artifice:instant-mana",
+			"effect": "mna:instant-mana",
 			"strength": 0.5
 		}
 	]

@@ -1,9 +1,9 @@
 {
 	"type": "mysticalchemy:potion_ingredient",
-	"item": "mana-and-artifice:desert_nova",
+	"item": "mna:desert_nova",
 	"effects": [
 		{
-			"effect": "mana-and-artifice:mana-boost",
+			"effect": "mna:mana-boost",
 			"strength": 0.5
 		},
 		{
