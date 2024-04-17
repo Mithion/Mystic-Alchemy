@@ -7,7 +7,6 @@ import java.util.List;
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.network.chat.Component;
@@ -86,9 +85,7 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 		if (pLevel.isClientSide && pState.getValue(LEVEL) > 0) {
 			CrucibleTile crucible = (CrucibleTile) pLevel.getBlockEntity(pPos);
 			if (crucible != null && crucible.getHeat() >= CrucibleTile.BOIL_POINT) {
-				Minecraft mc = Minecraft.getInstance();
-				pLevel.playSound(mc.player, pPos, SoundEvents.LAVA_POP, SoundSource.BLOCKS,
-						1.0f, (float) (0.8f + Math.random() * 0.4f));
+				pLevel.playSound(null, pPos, SoundEvents.LAVA_POP, SoundSource.BLOCKS, 1.0f, (float) (0.8f + Math.random() * 0.4f));
 			}
 		}
 	}
