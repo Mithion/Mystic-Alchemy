@@ -97,7 +97,7 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 		CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
 		if (crucible != null && state.getValue(LEVEL) > 0) {
 			HashMap<MobEffect, Float> prominents = crucible.getProminentEffects();
-			if (!prominents.isEmpty()) {
+			if (!prominents.size() > 0) {
 				// if there are prominents and the player is using a glass bottle, assume
 				// extracting current potion.
 				if (player.getItemInHand(handIn).getItem() == Items.GLASS_BOTTLE) {
