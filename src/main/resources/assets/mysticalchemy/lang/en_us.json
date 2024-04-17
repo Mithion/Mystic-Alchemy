@@ -1,6 +1,9 @@
 {
+	"itemGroup.mysticalchemy": "Mysticalchemy",
+
 	"block.mysticalchemy.crucible": "Crucible",
 	"block.mysticalchemy.crucible_empty": "Crucible",
+
 	"item.mysticalchemy.concoction": "Mystic Concoction",
 	"item.mysticalchemy.crucible_spoon": "Crucible Spoon",
 	"item.mysticalchemy.simple_sampling_kit": "Simple Sampling Kit",

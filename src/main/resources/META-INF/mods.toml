@@ -1,28 +1,27 @@
-modLoader="javafml"
-loaderVersion="[41,)"
-license="All rights reserved"
-issueTrackerURL="https://github.com/Mithion/Mystic-Alchemy/issues"
+modLoader="javafml" #mandatory
+loaderVersion="${loader_version_range}" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license="${mod_license}"
 
-[[mods]]
-modId="mysticalchemy"
-version="0.2.0"
-displayName="Mystic Alchemy"
-credits="Thanks to the M&A community for helping me with ideas!  Thanks to Geolykt for the translation!"
-authors="Mithion"
-description='''
-Expands potions and brewing in the game to be more dynamic, and magical.
-'''
+[[mods]] #mandatory
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+issueTrackerURL="${mod_issues}"
+logoFile="${mod_logo}" #optional
+# A text field displayed in the mod UI
+credits="${mod_credits}"
+authors="${mod_authors}"
+description='''${mod_description}'''
 
-[[dependencies.mysticalchemy]]
-    modId="forge"
+[[dependencies.${mod_id}]]
+    modId="${api_name}"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="${api_version_range}"
     ordering="NONE"
     side="BOTH"
-    
-[[dependencies.mysticalchemy]]
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
-    side="BOTH"
+    sides="BOTH"

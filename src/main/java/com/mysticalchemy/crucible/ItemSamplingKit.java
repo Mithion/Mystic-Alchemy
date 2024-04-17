@@ -20,7 +20,7 @@ public class ItemSamplingKit extends Item {
 	private float threshold;
 	
 	public ItemSamplingKit(float threshold) {
-		super(new Item.Properties().m_41491_(CreativeModeTab.f_40758_));
+		super(new Item.Properties());
 		this.threshold = threshold;
 	}
 	

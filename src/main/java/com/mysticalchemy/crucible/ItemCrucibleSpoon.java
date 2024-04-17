@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class ItemCrucibleSpoon extends Item {
 	public ItemCrucibleSpoon() {
-		super(new Item.Properties().stacksTo(1).durability(200).m_41491_(CreativeModeTab.f_40758_));
+		super(new Item.Properties().stacksTo(1).durability(200));
 	}
 	
 	@Override

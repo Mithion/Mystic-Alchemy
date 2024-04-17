@@ -1,13 +1,17 @@
 package com.mysticalchemy.init;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.mysticalchemy.MysticAlchemy;
+import com.mysticalchemy.api.CreativeTabs;
 import com.mysticalchemy.crucible.IDontCreateBlockItem;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -28,11 +32,18 @@ public class BlockItemInit {
 				if (block instanceof IDontCreateBlockItem)
 					return;
 
-				final BlockItem blockItem = new BlockItem(block, new Item.Properties().m_41491_(CreativeModeTab.f_40758_));
+				final BlockItem blockItem = new BlockItem(block, new Item.Properties());
 				blockItems.add(blockItem);
 				helper.register(ForgeRegistries.BLOCKS.getKey(block), blockItem);
 
 			});
 		});
+	}
+
+	@SubscribeEvent
+	public static void FillCreativeTabs(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTab() == CreativeTabs.MYSTIC_ALCHEMY) {
+			blockItems.forEach(event::accept);
+		}
 	}
 }
