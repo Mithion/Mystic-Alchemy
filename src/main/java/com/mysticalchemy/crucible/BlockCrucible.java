@@ -1,7 +1,12 @@
 package com.mysticalchemy.crucible;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -34,10 +39,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, IDontCreateBlockItem {
 	public BlockCrucible() {
@@ -97,7 +98,7 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 		CrucibleTile crucible = (CrucibleTile) worldIn.getBlockEntity(pos);
 		if (crucible != null && state.getValue(LEVEL) > 0) {
 			HashMap<MobEffect, Float> prominents = crucible.getProminentEffects();
-			if (!prominents.size() > 0) {
+			if (prominents.size() > 0) {
 				// if there are prominents and the player is using a glass bottle, assume
 				// extracting current potion.
 				if (player.getItemInHand(handIn).getItem() == Items.GLASS_BOTTLE) {
