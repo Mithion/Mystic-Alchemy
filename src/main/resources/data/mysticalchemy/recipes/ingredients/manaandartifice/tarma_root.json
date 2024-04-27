@@ -3,7 +3,7 @@
 	"item": "mna:tarma_root",
 	"effects": [
 		{
-			"effect": "mna:instant-mana",
+			"effect": "mna:instant_mana",
 			"strength": 0.25
 		},
 		{
