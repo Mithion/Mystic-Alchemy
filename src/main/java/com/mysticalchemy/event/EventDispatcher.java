@@ -2,6 +2,7 @@ package com.mysticalchemy.event;
 
 import com.mysticalchemy.api.events.CrucibleEvent;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
@@ -13,5 +14,10 @@ public class EventDispatcher {
         CrucibleEvent.AddIngredient event = new CrucibleEvent.AddIngredient(effects, stack);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
+    }
+
+    public static void DispatchCrucibleExtractPotionEvent(ItemStack potionstack, Player player) {
+        CrucibleEvent.ExtractPotion event = new CrucibleEvent.ExtractPotion(potionstack, player);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

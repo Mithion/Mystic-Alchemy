@@ -2,7 +2,9 @@ package com.mysticalchemy.api.events;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import java.util.HashMap;
@@ -11,15 +13,8 @@ import java.util.HashMap;
  * This event is fired when the crucible is used.
  */
 public class CrucibleEvent extends Event {
-    private HashMap<MobEffect, Float> effects = new HashMap<>();
 
-    public CrucibleEvent(HashMap<MobEffect, Float> effects) {
-        this.effects = effects;
-    }
-
-    public HashMap<MobEffect, Float> getEffects() {
-        return effects;
-    }
+    public CrucibleEvent() {}
 
 
     /**
@@ -37,15 +32,40 @@ public class CrucibleEvent extends Event {
      */
     @HasResult
     public static class AddIngredient extends CrucibleEvent {
+        private HashMap<MobEffect, Float> effects = new HashMap<>();
         private final ItemStack stack;
 
+
         public AddIngredient(HashMap<MobEffect, Float> effects, ItemStack stack) {
-            super(effects);
+            super();
+            this.effects = effects;
             this.stack = stack;
+        }
+
+        public HashMap<MobEffect, Float> getEffects() {
+            return effects;
+        }
+        public ItemStack getStack() {
+            return stack;
+        }
+    }
+
+    public static class ExtractPotion extends CrucibleEvent {
+        private final ItemStack stack;
+        private final Player player;
+
+        public ExtractPotion(ItemStack potionstack, Player player) {
+            super();
+            this.stack = potionstack;
+            this.player = player;
         }
 
         public ItemStack getStack() {
             return stack;
+        }
+
+        public Player getPlayer() {
+            return player;
         }
     }
 }
