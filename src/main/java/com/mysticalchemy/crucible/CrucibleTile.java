@@ -1,5 +1,6 @@
 package com.mysticalchemy.crucible;
 
+import com.mysticalchemy.api.events.CrucibleEvent;
 import com.mysticalchemy.config.BrewingConfig;
 import com.mysticalchemy.event.EventDispatcher;
 import com.mysticalchemy.init.BlockInit;
@@ -188,16 +189,18 @@ public class CrucibleTile extends BlockEntity {
 			return false;
 		}
 
-		Event.Result result = EventDispatcher.DispatchCrucibleAddIngredientEvent(this.getAllEffects(), stack);
-		if (result == Event.Result.DENY) {
-			return false;
-		}
-
-		if (!canMerge(recipe.get(), stack.getCount()) && result != Event.Result.ALLOW) {
-			return false;
-		}
-
 		PotionIngredientRecipe resolved_recipe = recipe.get();
+		CrucibleEvent.AddIngredient event = EventDispatcher.DispatchCrucibleAddIngredientEvent(this.getAllEffects(), resolved_recipe, stack);
+		if (event.getResult() == Event.Result.DENY) {
+			return false;
+		}
+
+		if (!canMerge(recipe.get(), stack.getCount()) && event.getResult() != Event.Result.ALLOW) {
+			return false;
+		}
+
+		//event may have modified the recipe
+		resolved_recipe = event.getRecipe();
 
 		//handle various properties
 		if (resolved_recipe.getMakesLingering())

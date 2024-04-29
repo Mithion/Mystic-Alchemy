@@ -71,6 +71,10 @@ public class PotionIngredientRecipe extends CustomRecipe {
 	public HashMap<MobEffect,Float> getEffects(){		
 		return effects;
 	}
+
+	public void setEffects(HashMap<MobEffect,Float> effects) {
+		this.effects = effects;
+	}
 	
 	public ArrayList<Item> getMatchItems(){
 		if (tagResource != null) {
