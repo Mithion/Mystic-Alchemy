@@ -3,7 +3,7 @@
 	"item": "mna:wakebloom",
 	"effects": [
 		{
-			"effect": "mna:instant-mana",
+			"effect": "mna:instant_mana",
 			"strength": 0.1
 		},
 		{

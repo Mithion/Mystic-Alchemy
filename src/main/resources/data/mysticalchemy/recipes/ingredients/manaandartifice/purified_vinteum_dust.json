@@ -3,11 +3,11 @@
 	"item": "mna:purified_vinteum_dust",
 	"effects": [
 		{
-			"effect": "mna:mana-regen",
+			"effect": "mna:mana_regen",
 			"strength": 1
 		},
 		{
-			"effect": "mna:mana-boost",
+			"effect": "mna:mana_boost",
 			"strength": 0.5
 		}
 	]

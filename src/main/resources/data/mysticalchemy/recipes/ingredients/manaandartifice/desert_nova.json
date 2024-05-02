@@ -3,7 +3,7 @@
 	"item": "mna:desert_nova",
 	"effects": [
 		{
-			"effect": "mna:mana-boost",
+			"effect": "mna:mana_boost",
 			"strength": 0.5
 		},
 		{
