@@ -1,0 +1,15 @@
+{
+	"itemGroup.mysticalchemy": "Mysticalchemy",
+
+	"block.mysticalchemy.crucible": "Тигель",
+	"block.mysticalchemy.crucible_empty": "Тигель",
+
+	"item.mysticalchemy.concoction": "Мистическое варево",
+	"item.mysticalchemy.crucible_spoon": "Ложка для тигля",
+	"item.mysticalchemy.simple_sampling_kit": "Простой набор для отбора проб",
+	"item.mysticalchemy.advanced_sampling_kit": "Продвинутый набор для отбора проб",	
+	
+	"chat.mysticalchemy.no_effects": "Зелье без эффектов.",
+	"chat.mysticalchemy.no_notable_effects": "Этот набор не может разобрать эффекты в зелье.",
+	"chat.mysticalchemy.format_effect": "%s: %s"
+}
