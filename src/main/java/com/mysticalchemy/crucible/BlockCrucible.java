@@ -138,7 +138,10 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			if (prominentEffects.size() == 1)
 				potionstack.setHoverName(Component.translatable(prominentEffects.get(0).getDescriptionId()));
 			else
-				potionstack.setHoverName(Component.translatable("item.mysticalchemy.concoction"));
+				String customName = PotionNameHelper.generateCustomName(prominentEffects);
+                        if (customName != null) {
+				potionstack.setHoverName(Component.literal(customName));
+}
 
 			player.getItemInHand(handIn).shrink(1);
 			if (!player.addItem(potionstack)) {
