@@ -1,18 +1,16 @@
 package com.mysticalchemy.crucible;
 
-import java.util.HashMap;
-
 import com.mysticalchemy.init.BlockInit;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.HashMap;
 
 public class ItemSamplingKit extends Item {
 	//threshold controls what level of ingredients within the potion this will reveal.

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mysticalchemy.event.EventDispatcher;
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
 
@@ -139,6 +140,8 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 				potionstack.setHoverName(Component.translatable(prominentEffects.get(0).getDescriptionId()));
 			else
 				potionstack.setHoverName(Component.translatable("item.mysticalchemy.concoction"));
+
+			EventDispatcher.DispatchCrucibleExtractPotionEvent(potionstack, player);
 
 			player.getItemInHand(handIn).shrink(1);
 			if (!player.addItem(potionstack)) {

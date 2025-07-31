@@ -3,7 +3,6 @@ package com.mysticalchemy.init;
 import com.mysticalchemy.MysticAlchemy;
 import com.mysticalchemy.crucible.BlockCrucible;
 import com.mysticalchemy.crucible.BlockEmptyCrucible;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
