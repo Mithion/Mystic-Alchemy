@@ -11,12 +11,12 @@
 	
 	"chat.mysticalchemy.no_effects": "There are no effects in the potion.",
 	"chat.mysticalchemy.no_notable_effects": "There are no effects in the potion that this kit can read.",
-	"chat.mysticalchemy.format_effect": "%s: %s"
+	"chat.mysticalchemy.format_effect": "%s: %s",
 
 	"effect.elixir.absorption": "Endurance",
-        "effect.elixir.conduit_power": "Depth",
-        "effect.elixir.fire_resistance": "Emberproof",
-        "effect.elixir.haste": "Alacrity",
+    "effect.elixir.conduit_power": "Depth",
+    "effect.elixir.fire_resistance": "Emberproof",
+    "effect.elixir.haste": "Alacrity",
  	"effect.elixir.health_boost": "Vitality",
   	"effect.elixir.hero_of_the_village": "Valor",
   	"effect.elixir.invisibility": "Ghostwalk",
