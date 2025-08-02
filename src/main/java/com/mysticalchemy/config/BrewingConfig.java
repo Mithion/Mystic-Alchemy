@@ -1,9 +1,9 @@
 package com.mysticalchemy.config;
 
-import java.util.ArrayList;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.util.ArrayList;
 
 public class BrewingConfig {
 	public static ForgeConfigSpec.ConfigValue<String> disallowed_effects;

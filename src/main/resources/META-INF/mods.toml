@@ -25,3 +25,9 @@ description='''Expands potions and brewing in the game to be more dynamic, and m
     versionRange="[1.20.1,)"
     ordering="NONE"
     sides="BOTH"
+[[dependencies.mysticalchemy]]
+    modId="mna"
+    mandatory=false
+    versionRange="[3.1.0.8,4)"
+    ordering="AFTER"
+    side="BOTH"

@@ -3,12 +3,13 @@ package com.mysticalchemy.crucible;
 import java.util.HashMap;
 import java.util.Optional;
 
+import com.mysticalchemy.api.events.CrucibleEvent;
 import com.mysticalchemy.config.BrewingConfig;
+import com.mysticalchemy.event.EventDispatcher;
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.RecipeInit;
 import com.mysticalchemy.init.TileEntityInit;
 import com.mysticalchemy.recipe.PotionIngredientRecipe;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +31,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.HashMap;
+import java.util.Optional;
 
 public class CrucibleTile extends BlockEntity {
 
@@ -175,34 +180,46 @@ public class CrucibleTile extends BlockEntity {
 		if (recipeManager == null) {
 			recipeManager = level.getRecipeManager();
 		}
-		if (recipeManager == null)
+		if (recipeManager == null) {
 			return false;
+		}
 
 		Optional<PotionIngredientRecipe> recipe = recipeManager
 				.getRecipesFor(RecipeInit.POTION_RECIPE_TYPE.get(), createDummyCraftingInventory(stack), level).stream()
 				.findFirst();
 
-		if (recipe.isPresent() && canMerge(recipe.get(), stack.getCount())) {
-			PotionIngredientRecipe resolved_recipe = recipe.get();
-			
-			//handle various properties
-			if (resolved_recipe.getMakesLingering())
-				is_lingering = true;
-			if (resolved_recipe.getMakesSplash())
-				is_splash = true;
-			if (resolved_recipe.getDurationAdded() > 0)
-				duration += resolved_recipe.getDurationAdded() * stack.getCount();
-			
-			heat = Mth.clamp(heat - ITEM_HEAT_LOSS * stack.getCount(), MIN_TEMP, MAX_TEMP);
-			
-			//effects
-			mergeEffects(resolved_recipe.getEffects(), stack.getCount());
-			recalculatePotionColor();
-			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-			return true;
+		if (recipe.isEmpty()) {
+			return false;
 		}
 
-		return false;
+		PotionIngredientRecipe resolved_recipe = recipe.get();
+		CrucibleEvent.AddIngredient event = EventDispatcher.DispatchCrucibleAddIngredientEvent(this.getAllEffects(), resolved_recipe, stack);
+		if (event.getResult() == Event.Result.DENY) {
+			return false;
+		}
+
+		if (!canMerge(recipe.get(), stack.getCount()) && event.getResult() != Event.Result.ALLOW) {
+			return false;
+		}
+
+		//event may have modified the recipe
+		resolved_recipe = event.getRecipe();
+
+		//handle various properties
+		if (resolved_recipe.getMakesLingering())
+			is_lingering = true;
+		if (resolved_recipe.getMakesSplash())
+			is_splash = true;
+		if (resolved_recipe.getDurationAdded() > 0)
+			duration += resolved_recipe.getDurationAdded() * stack.getCount();
+
+		heat = Mth.clamp(heat - ITEM_HEAT_LOSS * stack.getCount(), MIN_TEMP, MAX_TEMP);
+
+		//effects
+		mergeEffects(resolved_recipe.getEffects(), stack.getCount());
+		recalculatePotionColor();
+		level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+		return true;
 	}
 
 	private void recalculatePotionColor() {

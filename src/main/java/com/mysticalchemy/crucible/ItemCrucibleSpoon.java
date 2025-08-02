@@ -1,7 +1,6 @@
 package com.mysticalchemy.crucible;
 
 import com.mysticalchemy.init.BlockInit;
-
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
