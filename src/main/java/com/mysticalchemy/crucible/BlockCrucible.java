@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
+import com.mysticalchemy.util.ElixirGenerator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -135,10 +136,15 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			PotionUtils.setPotion(potionstack, Potions.WATER);
 			PotionUtils.setCustomEffects(potionstack, prominentEffects);
 
-			if (prominentEffects.size() == 1)
+			if (prominentEffects.size() == 1){
 				potionstack.setHoverName(Component.translatable(prominentEffects.get(0).getDescriptionId()));
-			else
-				potionstack.setHoverName(Component.translatable("item.mysticalchemy.concoction"));
+			}else{
+				String customName = ElixirGeneration.generateCustomName(prominentEffects);
+                        	if (customName != null) {
+					potionstack.setHoverName(Component.literal(customName));
+				}
+			}
+		
 
 			player.getItemInHand(handIn).shrink(1);
 			if (!player.addItem(potionstack)) {
