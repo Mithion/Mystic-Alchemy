@@ -137,8 +137,8 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 			if (prominentEffects.size() == 1){
 				potionstack.setHoverName(Component.translatable(prominentEffects.get(0).getDescriptionId()));
 			}else{
-				String customName = ElixirGeneration.generateCustomName(prominentEffects);
-                        	if (customName != null) {
+				String customName = ElixirGenerator.generateCustomName(prominentEffects);
+                if (customName != null) {
 					potionstack.setHoverName(Component.literal(customName));
 				}
 			}
