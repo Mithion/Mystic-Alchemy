@@ -1,15 +1,9 @@
 package com.mysticalchemy.init;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import com.mysticalchemy.MysticAlchemy;
 import com.mysticalchemy.api.CreativeTabs;
 import com.mysticalchemy.crucible.IDontCreateBlockItem;
-
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -18,6 +12,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(modid = MysticAlchemy.MODID, bus = Bus.MOD)
 public class BlockItemInit {

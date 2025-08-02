@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mysticalchemy.MysticAlchemy;
+import com.mysticalchemy.compat.DeferredEffectLoader;
 import com.mysticalchemy.init.RecipeInit;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -71,6 +72,10 @@ public class PotionIngredientRecipe extends CustomRecipe {
 	public HashMap<MobEffect,Float> getEffects(){		
 		return effects;
 	}
+
+	public void setEffects(HashMap<MobEffect,Float> effects) {
+		this.effects = effects;
+	}
 	
 	public ArrayList<Item> getMatchItems(){
 		if (tagResource != null) {
@@ -116,15 +121,23 @@ public class PotionIngredientRecipe extends CustomRecipe {
 				JsonElement effectsElem = json.get("effects");
 				if (effectsElem.isJsonArray()) {
 					JsonArray elements = effectsElem.getAsJsonArray();
+					HashMap<ResourceLocation, Float> unresolvedEffects = new HashMap<>();
+					
 					elements.forEach(e -> {
 						if (e.isJsonObject()) {
 							JsonObject eObj = e.getAsJsonObject();
 							if (eObj.has("effect") && eObj.has("strength")) {
-								MobEffect eff = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(eObj.get("effect").getAsString()));
-								if (eff != null)
-									recipe.effects.put(eff, eObj.get("strength").getAsFloat());
-								else
-									MysticAlchemy.LOGGER.warn("Failed to resolve potion effect " + eObj.get("effect").getAsString() + " in " + recipeId.toString());
+								ResourceLocation effectId = new ResourceLocation(eObj.get("effect").getAsString());
+								Float strength = eObj.get("strength").getAsFloat();
+								
+								// Try immediate resolution
+								MobEffect eff = ForgeRegistries.MOB_EFFECTS.getValue(effectId);
+								if (eff != null) {
+									recipe.effects.put(eff, strength);
+								} else {
+									// Defer if not found
+									unresolvedEffects.put(effectId, strength);
+								}
 							}else {
 								MysticAlchemy.LOGGER.error("Potion Ingredient Recipe effects element is missing effect or strength property");
 							}
@@ -132,6 +145,11 @@ public class PotionIngredientRecipe extends CustomRecipe {
 							MysticAlchemy.LOGGER.error("Potion Ingredient Recipe effects element is not a json object");
 						}
 					});
+					
+					// Only defer unresolved effects
+					if (!unresolvedEffects.isEmpty()) {
+						DeferredEffectLoader.deferRecipe(recipe, unresolvedEffects);
+					}
 				}else {
 					MysticAlchemy.LOGGER.error("Potion Ingredient Recipe effects field is not an array");
 				}

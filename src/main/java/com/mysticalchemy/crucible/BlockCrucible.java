@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mysticalchemy.event.EventDispatcher;
 import com.mysticalchemy.init.BlockInit;
 import com.mysticalchemy.init.TileEntityInit;
 import com.mysticalchemy.util.ElixirGenerator;
@@ -145,6 +146,8 @@ public class BlockCrucible extends LayeredCauldronBlock implements EntityBlock, 
 				}
 			}
 		
+
+			EventDispatcher.DispatchCrucibleExtractPotionEvent(potionstack, player);
 
 			player.getItemInHand(handIn).shrink(1);
 			if (!player.addItem(potionstack)) {

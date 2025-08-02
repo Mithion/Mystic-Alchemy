@@ -1,11 +1,10 @@
 package com.mysticalchemy.config;
 
-import java.nio.file.Path;
-
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.nio.file.Path;
 
 public class Config {
 	private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

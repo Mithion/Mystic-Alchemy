@@ -96,6 +96,10 @@ dependencies {
     // these mods are included only for the purpose of testing
     runtimeOnly fg.deobf("curse.maven:jei-${jei_projectId}:${jei_fileId}")
     runtimeOnly fg.deobf("curse.maven:betteradvancements-${advancements_projectId}:${advancements_fileId}")
+
+    runtimeOnly fg.deobf("curse.maven:mna-${mna_projectId}:${mna_fileId}")
+    runtimeOnly fg.deobf("curse.maven:geckolib-${geckolib_projectId}:${geckolib_fileId}")
+    runtimeOnly fg.deobf("curse.maven:curios-${curios_projectId}:${curios_fileId}")
 }
 
 
